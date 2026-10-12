@@ -14,6 +14,7 @@ function NavBar() {
       <div className="nav-buttons">
         <Boton texto="Ingresar" variante="transparente" />
         <Boton texto="Agendar Cita" variante="color" />
+        <Boton texto="Contáctanos"  />
       </div>
     </nav>
   );
