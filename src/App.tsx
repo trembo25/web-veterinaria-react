@@ -1,10 +1,11 @@
 import "./App.css";
-import Inicio from "./assets/pages/Inicio";
+import Inicio from "./pages/Inicio";
 
 function App() {
   return (
-  <Inicio />
-
+    
+      <Inicio />
+  
   );
 }
 

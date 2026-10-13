@@ -1,10 +1,25 @@
+/* Quita los bordes/márgenes por defecto del navegador */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color:#0f172a;/* El color oscuro que definiste */
+  color: #ffffff;             /* Cambia el texto general a blanco para legibilidad */
+}
+/*fondo principal de la pagina*/
+.inicio-body {
+  background-color: #801e00;
+  background-color: #162533; /* O el color/fondo que quieras usar */
+  min-height: 100vh;         /* Asegura que cubra el 100% del alto de la pantalla */
+  width: 100%;
+ 
+}
 /* Estilos para el Header principal */
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 40px;
-  background-color: #ffffff;
+  background-color: #66c6fd;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 

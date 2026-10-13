@@ -25,6 +25,12 @@ const serviciosData = [
         titulo: "Baño y Peluquería",
         descripcion: "Manten a tus mascotas limpias y con estilo con nuestro servicio de baño y peluquería.",
         imagen: "src/assets/images/peluqueria.jpeg"
+    },
+    {
+        id: 5,
+        titulo: "Hospitalización",
+        descripcion: "Ofrecemos hospitalización para mascotas que requieren atención médica continua.",
+        imagen: "src/assets/images/hospitalizacion.jpeg"
     }
     
     
