@@ -12,7 +12,10 @@ function CardServicio({ titulo, descripcion, imagen }: CardServicioProps) {
         <div className="card-servicio">
             {/*Contendor de la imagen*/}
             <div className="card-imagen-container">
-                <img src={imagen} alt={titulo} className="card-imagen" />
+                <img 
+                className="card-imagen"
+                src={imagen} 
+                alt={titulo} />
             </div>
             {/* Contenido de la Card */}
             <div className="card-body">

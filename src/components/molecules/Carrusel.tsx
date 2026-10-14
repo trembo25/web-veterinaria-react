@@ -32,7 +32,7 @@ function Carrusel() {
                         alt="atencion"
                         style={{ height: "500px", objectFit: "cover" }}
                     />
-                    <div className="carousel-caption d-none d-md-block bg-dark bg-opacity-70 rounded p-3">
+                    <div className="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
                         <h3>Cuidando a tus mascotas de Rancagua desde 2009</h3>
                         <p>Atencion medica especializada</p>
                     </div>

@@ -2,13 +2,15 @@
 html, body {
   margin: 0;
   padding: 0;
-  background-color:#0f172a;/* El color oscuro que definiste */
+  background-color:#eff1f5;/* El color oscuro que definiste */
   color: #ffffff;             /* Cambia el texto general a blanco para legibilidad */
 }
+
+
 /*fondo principal de la pagina*/
 .inicio-body {
   background-color: #801e00;
-  background-color: #162533; /* O el color/fondo que quieras usar */
+  background-color: #edf0f3; /* O el color/fondo que quieras usar */
   min-height: 100vh;         /* Asegura que cubra el 100% del alto de la pantalla */
   width: 100%;
  
@@ -95,6 +97,98 @@ html, body {
   background-color: #f0fdf4;
 }
 
+/* =========================================================
+   SECCIÓN HERO (TEXTO A LA IZQUIERDA + IMAGEN A LA DERECHA)
+   ========================================================= */
+
+.hero-seccion {
+  /* 1. Convierte el contenedor principal en una "Caja Flex" */
+  display: flex;
+
+  /* 2. Alinea los elementos verticalmente al centro */
+  align-items: center;
+
+  /* 3. Distribuye el espacio entre la columna de texto y la de la imagen */
+  justify-content: space-between;
+
+  /* 4. Separa las dos columnas para que no queden pegadas */
+  gap: 40px;
+
+  /* 5. Márgenes y rellenos de la sección general */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+/* --- COLUMNA DE TEXTO (IZQUIERDA) --- */
+.hero-texto {
+  /* Le da un peso de 1 a la columna para que crezca de forma proporcional */
+  flex: 1;
+  text-align: left;
+}
+
+.hero-texto h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #1e1b4b; /* O puedes usar tu color #0d9488 */
+  margin-bottom: 20px;
+}
+
+.hero-texto p {
+  font-size: 1.1rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* LISTA DE BENEFICIOS */
+.hero-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hero-lista li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.hero-lista li span {
+  color: #04d3a6; /* Color purpura del icono check */
+  font-weight: bold;
+}
+
+/* --- COLUMNA DE LA IMAGEN (DERECHA) --- */
+.hero-imagen {
+  /* Le da el mismo peso proporcional que al texto */
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-imagen img {
+  width: 100%;
+  max-width: 500px; /* Tamaño máximo para mantener proporción */
+  height: auto;
+  object-fit: cover;
+  /* Aplica las esquinas redondeadas igual que la imagen de la captura */
+  border-radius: 24px; 
+}
+
+/* --- RESPONSIVE PARA MOVILES --- */
+@media (max-width: 768px) {
+  .hero-seccion {
+    /* Cambia de fila a columna en pantallas pequeñas */
+    flex-direction: column;
+    padding: 30px 15px;
+  }
+}
 /* Seccion de Servicios */
 .seccion-servicios {
   padding: 50px 20px;
