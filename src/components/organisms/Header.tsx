@@ -2,14 +2,14 @@ import NavBar from "./NavBar";
 
 function Header() {
   return (
-    <header className="header-container">
-      {/* Logo y Nombre de la Veterinaria */}
-      <div className="logo">
-        <span>🐾</span>
-        <h2> Veterinaria San Marcos</h2>
+    <header className="vet-header">
+      {/* Primera fila: logo y nombre de la veterinaria. */}
+      <div className="vet-logo">
+        <span aria-hidden="true">🐾</span>
+        <h2>Veterinaria San Marcos</h2>
       </div>
 
-      {/* Menú de navegación importado */}
+      {/* Contiene los enlaces y los botones de la sesión. */}
       <NavBar />
     </header>
   );

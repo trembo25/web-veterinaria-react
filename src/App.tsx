@@ -1,11 +1,44 @@
 import "./App.css";
+import { Route, Routes } from "react-router-dom";
+
 import Inicio from "./pages/Inicio";
+import Login from "./pages/Login";
+import Registro from "./pages/Registro";
+import PanelAdmin from "./pages/PanelAdmin";
+
+import RutaProtegida from "./routes/RutaProtegida";
 
 function App() {
   return (
-    
-      <Inicio />
-  
+    <Routes>
+      {/* Páginas públicas. */}
+      <Route path="/" element={<Inicio />} />
+
+      <Route path="/login" element={<Login />} />
+
+      <Route path="/registro" element={<Registro />} />
+
+      {/* Conectamos /admin con el panel y comprobamos el rol. */}
+      <Route
+        path="/admin"
+        element={
+          <RutaProtegida rol="admin">
+            <PanelAdmin />
+          </RutaProtegida>
+        }
+      />
+
+      {/* Si una dirección no existe, mostramos un mensaje
+          en lugar de dejar la pantalla completamente vacía. */}
+      <Route
+        path="*"
+        element={
+          <p style={{ padding: "24px", color: "#111" }}>
+            Página no encontrada.
+          </p>
+        }
+      />
+    </Routes>
   );
 }
 

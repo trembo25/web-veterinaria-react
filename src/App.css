@@ -1,148 +1,281 @@
-/* Quita los bordes/márgenes por defecto del navegador */
-html, body {
+/* =========================================================
+   1. ESTILOS GENERALES
+   ========================================================= */
+
+/* Quitamos los márgenes del navegador y definimos los
+   colores generales de la aplicación. */
+html,
+body {
   margin: 0;
   padding: 0;
-  background-color:#eff1f5;/* El color oscuro que definiste */
-  color: #ffffff;             /* Cambia el texto general a blanco para legibilidad */
+  background-color: #eff1f5;
+  color: #111;
+}
+
+/* Los elementos de nuestras secciones incluyen el padding
+   y los bordes dentro de su ancho declarado. */
+.vet-header,
+.vet-header *,
+.inicio-body,
+.inicio-body * {
+  box-sizing: border-box;
 }
 
 
-/*fondo principal de la pagina*/
+/* =========================================================
+   2. CONTENEDOR DE LA PÁGINA DE INICIO
+   ========================================================= */
+
 .inicio-body {
-  background-color: #801e00;
-  background-color: #edf0f3; /* O el color/fondo que quieras usar */
-  min-height: 100vh;         /* Asegura que cubra el 100% del alto de la pantalla */
+  background-color: #edf0f3;
+  min-height: 100vh;
   width: 100%;
- 
 }
-/* Estilos para el Header principal */
-.header-container {
+
+
+/* =========================================================
+   3. ENCABEZADO DE LA VETERINARIA
+   Escritorio: logo, enlaces y botones en una sola fila.
+   ========================================================= */
+
+.vet-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px 40px;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 20px 24px;
   background-color: #66c6fd;
+  color: #111;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* Alineación del Logo */
-.logo {
+
+/* ---------------------------------------------------------
+   3.1. Logo y nombre
+   --------------------------------------------------------- */
+
+.vet-header .vet-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: #0d9488; /* Color verde/turquesa institucional */
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-.logo h2 {
+.vet-header .vet-logo span {
+  flex-shrink: 0;
+}
+
+.vet-header .vet-logo h2 {
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: bold;
+  color: #111;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-align: left;
 }
 
-/* Alineación de la barra de navegación */
-.navbar {
+
+/* ---------------------------------------------------------
+   3.2. Navegación
+   Ya no usamos display: contents ni una cuadrícula.
+   --------------------------------------------------------- */
+
+.vet-header .vet-nav {
   display: flex;
   align-items: center;
-  gap: 30px;
+  justify-content: flex-end;
+  gap: 18px;
+  min-width: 0;
 }
 
-.nav-links {
+
+/* ---------------------------------------------------------
+   3.3. Enlaces informativos
+   --------------------------------------------------------- */
+
+.vet-header .vet-links {
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
 }
 
-.nav-links a {
+.vet-header .vet-links a {
+  color: #263238;
   text-decoration: none;
-  color: #333333;
+  font-size: 14px;
   font-weight: 500;
+  white-space: nowrap;
   transition: color 0.2s;
 }
 
-.nav-links a:hover {
-  color: #0d9488;
+.vet-header .vet-links a:hover {
+  color: #0f766e;
 }
 
-.nav-buttons {
+.vet-header .vet-links a:focus-visible {
+  outline: 3px solid #183d59;
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+
+/* ---------------------------------------------------------
+   3.4. Saludo y botones
+   --------------------------------------------------------- */
+
+.vet-header .vet-actions {
   display: flex;
-  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+
+  /* En escritorio, mantenemos las acciones en una fila. */
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
-/* Estilos para nuestro Átomo Botón */
-.btn-custom {
-  padding: 8px 18px;
-  border-radius: 20px;
+.vet-header .vet-user {
+  display: block;
+  max-width: 100px;
+  min-width: 0;
+
+  color: #111;
+  font-size: 13px;
   font-weight: 600;
-  cursor: pointer;
+
+  /* El nombre puede acortarse sin desplazar los botones. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Botones compactos exclusivamente en el encabezado.
+   No modifica los botones del panel de administración. */
+.vet-header .vet-actions .btn-custom {
+  padding: 8px 10px;
+  font-size: 13px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* =========================================================
+   4. ÁTOMO BOTON
+   Clases utilizadas por components/atoms/Boton.tsx.
+   También se reutilizan desde el panel de administración.
+   ========================================================= */
+
+.btn-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 18px;
   border: 2px solid #0d9488;
-  
+  border-radius: 20px;
+
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
 }
 
-/* Variante sólida */
-.btn-primary {
+
+/* ---------------------------------------------------------
+   4.1. Variante "color"
+   --------------------------------------------------------- */
+
+.btn-custom.btn-color {
   background-color: #0d9488;
-  color: white;
+  color: #fff;
 }
 
-.btn-primary:hover {
+.btn-custom.btn-color:hover {
   background-color: #0f766e;
+  border-color: #0f766e;
 }
 
-/* Variante transparente */
-.btn-outline {
+
+/* ---------------------------------------------------------
+   4.2. Variante "transparente"
+   --------------------------------------------------------- */
+
+.btn-custom.btn-transparente {
   background-color: transparent;
-  color: #0d9488;
+  color: #111;
 }
 
-.btn-outline:hover {
+.btn-custom.btn-transparente:hover {
   background-color: #f0fdf4;
 }
 
+
+/* ---------------------------------------------------------
+   4.3. Selección con teclado
+   --------------------------------------------------------- */
+
+.btn-custom:focus-visible {
+  outline: 3px solid #183d59;
+  outline-offset: 3px;
+}
+
+
 /* =========================================================
-   SECCIÓN HERO (TEXTO A LA IZQUIERDA + IMAGEN A LA DERECHA)
+   5. SECCIÓN HERO
+   Presentación: texto a la izquierda e imagen a la derecha.
    ========================================================= */
 
 .hero-seccion {
-  /* 1. Convierte el contenedor principal en una "Caja Flex" */
   display: flex;
-
-  /* 2. Alinea los elementos verticalmente al centro */
   align-items: center;
-
-  /* 3. Distribuye el espacio entre la columna de texto y la de la imagen */
   justify-content: space-between;
-
-  /* 4. Separa las dos columnas para que no queden pegadas */
   gap: 40px;
 
-  /* 5. Márgenes y rellenos de la sección general */
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 60px 20px;
 }
 
-/* --- COLUMNA DE TEXTO (IZQUIERDA) --- */
+
+/* ---------------------------------------------------------
+   5.1. Columna de texto
+   --------------------------------------------------------- */
+
 .hero-texto {
-  /* Le da un peso de 1 a la columna para que crezca de forma proporcional */
   flex: 1;
+  min-width: 0;
   text-align: left;
 }
 
 .hero-texto h2 {
+  margin: 0 0 20px;
+  color: #1e1b4b;
   font-size: 2.5rem;
   font-weight: 800;
   line-height: 1.2;
-  color: #1e1b4b; /* O puedes usar tu color #0d9488 */
-  margin-bottom: 20px;
 }
 
 .hero-texto p {
-  font-size: 1.1rem;
+  margin: 0 0 24px;
   color: #4b5563;
+  font-size: 1.1rem;
   line-height: 1.6;
-  margin-bottom: 24px;
 }
 
-/* LISTA DE BENEFICIOS */
+
+/* ---------------------------------------------------------
+   5.2. Lista de beneficios
+   --------------------------------------------------------- */
+
 .hero-lista {
   list-style: none;
   padding: 0;
@@ -153,43 +286,46 @@ html, body {
   display: flex;
   align-items: center;
   gap: 10px;
+
+  margin-bottom: 10px;
+  color: #374151;
   font-size: 1rem;
   font-weight: 600;
-  color: #374151;
-  margin-bottom: 10px;
+  line-height: 1.5;
 }
 
 .hero-lista li span {
-  color: #04d3a6; /* Color purpura del icono check */
+  color: #04d3a6;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
-/* --- COLUMNA DE LA IMAGEN (DERECHA) --- */
+
+/* ---------------------------------------------------------
+   5.3. Columna de imagen
+   --------------------------------------------------------- */
+
 .hero-imagen {
-  /* Le da el mismo peso proporcional que al texto */
   flex: 1;
+  min-width: 0;
   display: flex;
   justify-content: center;
 }
 
 .hero-imagen img {
+  display: block;
   width: 100%;
-  max-width: 500px; /* Tamaño máximo para mantener proporción */
+  max-width: 500px;
   height: auto;
   object-fit: cover;
-  /* Aplica las esquinas redondeadas igual que la imagen de la captura */
-  border-radius: 24px; 
+  border-radius: 24px;
 }
 
-/* --- RESPONSIVE PARA MOVILES --- */
-@media (max-width: 768px) {
-  .hero-seccion {
-    /* Cambia de fila a columna en pantallas pequeñas */
-    flex-direction: column;
-    padding: 30px 15px;
-  }
-}
-/* Seccion de Servicios */
+
+/* =========================================================
+   6. SECCIÓN DE SERVICIOS
+   ========================================================= */
+
 .seccion-servicios {
   padding: 50px 20px;
   background-color: #f8fafc;
@@ -197,32 +333,48 @@ html, body {
 }
 
 .titulo-seccion {
-  color: #0d9488; /* Verde institucional */
+  margin: 0 0 40px;
+  color: #0d9488;
   font-size: 2.2rem;
   font-weight: bold;
-  margin-bottom: 40px;
 }
 
-/* Grilla para ordenar las 4 tarjetas en fila */
+
+/* ---------------------------------------------------------
+   6.1. Distribución de las tarjetas
+   --------------------------------------------------------- */
+
 .servicios-grid {
   display: flex;
   justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
   gap: 24px;
-  flex-wrap: wrap; /* Para que en celulares se acomoden hacia abajo */
+
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Estilo individual de cada Card */
+
+/* ---------------------------------------------------------
+   6.2. Tarjeta individual
+   --------------------------------------------------------- */
+
 .card-servicio {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  width: 260px;
   display: flex;
   flex-direction: column;
+
+  width: 260px;
+  max-width: 100%;
   overflow: hidden;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s;
 }
 
 .card-servicio:hover {
@@ -230,35 +382,199 @@ html, body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
+
+/* ---------------------------------------------------------
+   6.3. Imagen de la tarjeta
+   --------------------------------------------------------- */
+
 .card-imagen-container {
-  height: 160px;
   width: 100%;
+  height: 160px;
+  flex-shrink: 0;
 }
 
 .card-imagen {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.card-body {
-  padding: 20px;
+
+/* ---------------------------------------------------------
+   6.4. Contenido de la tarjeta
+   El selector solo afecta a las tarjetas de servicios.
+   --------------------------------------------------------- */
+
+.card-servicio .card-body {
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-grow: 1;
-  justify-content: space-between;
+
+  padding: 20px;
 }
 
 .card-titulo {
-  font-size: 1.2rem;
+  margin: 0 0 12px;
   color: #1e293b;
-  margin-bottom: 12px;
+  font-size: 1.2rem;
 }
 
 .card-descripcion {
-  font-size: 0.9rem;
+  margin: 0 0 20px;
   color: #64748b;
-  margin-bottom: 20px;
+  font-size: 0.9rem;
   line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* Empuja el botón hacia abajo para alinear las acciones
+   cuando las tarjetas de una fila tienen distinta descripción. */
+.card-servicio .card-body .btn-custom {
+  margin-top: auto;
+}
+
+
+/* =========================================================
+   7. BOTÓN DEL FORMULARIO DE LOGIN
+   Utiliza el mismo celeste del encabezado.
+   ========================================================= */
+
+.boton-login {
+  width: 100%;
+  padding: 12px 24px;
+
+  background-color: #66c6fd;
+  color: #111;
+  border: none;
+  border-radius: 12px;
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+
+  transition: background-color 0.2s;
+}
+
+.boton-login:hover {
+  background-color: #46b5eb;
+}
+
+.boton-login:focus-visible {
+  outline: 3px solid #183d59;
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   8. DISEÑO RESPONSIVE
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   8.1. Pantallas medianas
+   Solo cuando se reduce el ancho, el menú pasa debajo
+   del nombre de la veterinaria.
+   --------------------------------------------------------- */
+
+@media (max-width: 1150px) {
+  .vet-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .vet-header .vet-nav {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .vet-header .vet-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+
+/* ---------------------------------------------------------
+   8.2. Hero en tablets y celulares
+   --------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .hero-seccion {
+    flex-direction: column;
+    padding: 30px 15px;
+    gap: 28px;
+  }
+
+  .hero-texto h2 {
+    font-size: 2rem;
+  }
+
+  .hero-imagen {
+    width: 100%;
+  }
+}
+
+
+/* ---------------------------------------------------------
+   8.3. Encabezado en celulares
+   --------------------------------------------------------- */
+
+@media (max-width: 650px) {
+  .vet-header {
+    padding: 18px 14px;
+  }
+
+  .vet-header .vet-logo h2 {
+    font-size: 1.15rem;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .vet-header .vet-nav {
+    flex-direction: column;
+  }
+
+  .vet-header .vet-links {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .vet-header .vet-actions {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .vet-header .vet-user {
+    flex-basis: 100%;
+    max-width: none;
+    text-align: center;
+  }
+
+  .titulo-seccion {
+    font-size: 1.8rem;
+  }
+}
+
+
+/* ---------------------------------------------------------
+   8.4. Pantallas muy pequeñas
+   --------------------------------------------------------- */
+
+@media (max-width: 400px) {
+  .hero-texto h2 {
+    font-size: 1.75rem;
+  }
+
+  .vet-header .vet-links {
+    gap: 12px;
+  }
 }
