@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import PanelAdmin from "./pages/PanelAdmin";
 import Agendar from "./pages/Agenda";
+import Citas from "./pages/Citas";
 
 import RutaProtegida from "./routes/RutaProtegida";
 
@@ -39,6 +40,16 @@ function App() {
           </RutaProtegida>
         }
       />
+
+            <Route
+        path="/citas"
+        element={
+          <RutaProtegida rol="cliente">
+            <Citas />
+          </RutaProtegida>
+        }
+      />
+
       <Route
         path="*"
         element={

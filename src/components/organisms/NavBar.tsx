@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Boton from "../atoms/Boton";
+import MenuDesplegable from "../molecules/MenuDesplegable";
 import { useAuth } from "../../context/AuthContext";
 
 function NavBar() {
@@ -48,10 +49,20 @@ function NavBar() {
               />
             )}
 
-            <Boton
-              texto="Salir"
-              variante="transparente"
-              onClick={cerrarSesion}
+            {/* Las tres rayas abren el menú de la cuenta. */}
+            <MenuDesplegable
+              opciones={[
+                {
+                  texto: "Citas",
+                  // El admin ve las citas en su panel; el cliente, en /citas.
+                  alElegir: () =>
+                    navegar(usuario.rol === "admin" ? "/admin" : "/citas"),
+                },
+                {
+                  texto: "Salir",
+                  alElegir: cerrarSesion,
+                },
+              ]}
             />
           </>
         ) : (
