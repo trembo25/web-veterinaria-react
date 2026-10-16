@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import Boton from "../components/atoms/Boton";
 import AdminServicios from "../components/organisms/AdminServicios";
 import TablaCitas from "../components/organisms/TablaCitas";
+import TablaMensajes from "../components/organisms/TablaMensajes";
 
 import "../Admin.css";
 
@@ -42,6 +43,9 @@ function PanelAdmin() {
       <AdminServicios />
 
       <TablaCitas />
+
+      <TablaMensajes />
+
     </main>
   );
 }

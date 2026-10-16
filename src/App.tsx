@@ -7,6 +7,7 @@ import Registro from "./pages/Registro";
 import PanelAdmin from "./pages/PanelAdmin";
 import Agendar from "./pages/Agenda";
 import Citas from "./pages/Citas";
+import Contacto from "./pages/Contacto";
 
 import RutaProtegida from "./routes/RutaProtegida";
 
@@ -58,6 +59,8 @@ function App() {
           </p>
         }
       />
+
+      <Route path="/contacto" element={<Contacto />} />
     </Routes>
   );
 }

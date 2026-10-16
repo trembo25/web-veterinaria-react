@@ -32,7 +32,10 @@ function NavBar() {
           onClick={() => navegar("/agenda")}
         />
 
-        <Boton texto="Contáctanos" />
+        <Boton
+          texto="Contáctanos"
+          onClick={() => navegar("/contacto")}
+        />
 
         {/* El bloque de sesión va al final: queda en el extremo derecho. */}
         {usuario ? (

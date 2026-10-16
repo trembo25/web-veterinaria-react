@@ -35,3 +35,12 @@ export type Cita = {
   servicio: string;
   fecha: string;
 };
+
+// Datos de un mensaje enviado desde el formulario de contacto.
+export type Mensaje = {
+  id: number;
+  nombre: string;
+  correo: string;
+  texto: string;
+  fecha: string;
+};
