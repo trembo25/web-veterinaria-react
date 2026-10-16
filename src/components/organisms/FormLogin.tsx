@@ -1,5 +1,5 @@
 import { useState, type SubmitEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import CampoFormulario from "../molecules/CampoFormulario";
 import { useAuth } from "../../context/AuthContext";
 
@@ -16,6 +16,15 @@ function FormLogin() {
 
   // Permite cambiar de página desde el código.
   const navegar = useNavigate();
+
+  const ubicacion = useLocation();
+
+  const estado = ubicacion.state as {
+    from?: string;
+  } | null;
+
+  const destino = estado?.from;
+  
 
   const manejarEnvio = (e: SubmitEvent<HTMLFormElement>) => {
     // Evitamos que el formulario recargue la página.
@@ -59,7 +68,7 @@ function FormLogin() {
     }
 
     // El cliente vuelve al inicio de la página informativa.
-    navegar("/", { replace: true });
+    navegar(destino ?? "/", { replace: true });
   };
 
   return (
@@ -96,7 +105,8 @@ function FormLogin() {
 
       <p className="mt-3 mb-0 text-center">
         ¿No tienes cuenta?{" "}
-        <Link to="/registro">
+        <Link to="/registro" state={{ from: destino }}
+        >
           Regístrate
         </Link>
       </p>

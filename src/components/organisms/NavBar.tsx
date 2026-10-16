@@ -25,6 +25,15 @@ function NavBar() {
 
       {/* Las acciones ocupan toda la segunda fila. */}
       <div className="vet-actions">
+        <Boton
+          texto="Agendar Cita"
+          variante="color"
+          onClick={() => navegar("/agenda")}
+        />
+
+        <Boton texto="Contáctanos" />
+
+        {/* El bloque de sesión va al final: queda en el extremo derecho. */}
         {usuario ? (
           <>
             <span className="vet-user">
@@ -52,14 +61,6 @@ function NavBar() {
             onClick={() => navegar("/login")}
           />
         )}
-
-        {/* El agendamiento lo conectará tu compañero. */}
-        <Boton
-          texto="Agendar Cita"
-          variante="color"
-        />
-
-        <Boton texto="Contáctanos" />
       </div>
     </nav>
   );

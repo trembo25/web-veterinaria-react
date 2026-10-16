@@ -5,6 +5,7 @@ import Inicio from "./pages/Inicio";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import PanelAdmin from "./pages/PanelAdmin";
+import Agendar from "./pages/Agenda";
 
 import RutaProtegida from "./routes/RutaProtegida";
 
@@ -30,6 +31,14 @@ function App() {
 
       {/* Si una dirección no existe, mostramos un mensaje
           en lugar de dejar la pantalla completamente vacía. */}
+        <Route
+        path="/agenda"
+        element={
+          <RutaProtegida rol="cliente">
+            <Agendar />
+          </RutaProtegida>
+        }
+      />
       <Route
         path="*"
         element={

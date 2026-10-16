@@ -1,5 +1,5 @@
 import CardServicio from "../molecules/CardServicio";
-import { obtenerServicios } from "../../data/Servicios";
+import { obtenerServicios } from "../../data/servicios";
 
 function Servicios() {
   // Leemos la lista actual cada vez que se renderiza este componente.
