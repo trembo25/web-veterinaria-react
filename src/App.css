@@ -657,3 +657,54 @@ body {
     gap: 12px;
   }
 }
+
+/* =========================================================
+   9. FOOTER
+   Lo usa components/organisms/Footer.tsx.
+   ========================================================= */
+
+.vet-footer {
+  padding: 40px 0 20px;
+  background-color: #183d59;
+  color: #fff;
+}
+
+.vet-footer .vet-footer-titulo {
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.vet-footer .vet-footer-texto {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.vet-footer .vet-footer-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vet-footer .vet-footer-lista li {
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Solo los enlaces de la lista; los botones usan los colores de Bootstrap. */
+.vet-footer .vet-footer-lista a {
+  color: #fff;
+}
+
+.vet-footer .vet-footer-lista a:hover {
+  color: #66c6fd;
+}
+
+.vet-footer .vet-footer-copy {
+  margin: 32px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  text-align: center;
+}

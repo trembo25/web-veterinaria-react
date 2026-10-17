@@ -1,58 +1,79 @@
+import { Link } from "react-router-dom";
+import { contacto } from "../../data/contacto";
+
 function Footer() {
   return (
-    <footer className="bg-primary text-white py-4 mt-auto">
+    <footer className="vet-footer">
       <div className="container">
-        
-        {/* Usamos d-flex con flex-column para móvil y flex-md-row para pantallas medianas/grandes */}
-        <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 text-center text-md-start">
-          
-          {/* COLUMNA 1: Copyright e información de marca */}
-          <div className="footer-copyright">
-            <span className="mb-0 fw-semibold">
-              © {new Date().getFullYear()} Veterinaria San Marcos.
-            </span>
-            <p className="small mb-0 text-white-50">Todos los derechos reservados.</p>
-          </div>
-
-          {/* COLUMNA 2: Información de Contacto (Formateada en líneas independientes) */}
-          <div className="footer-contacto">
-            <p className="fw-bold mb-1">¿Necesitas ayuda?</p>
-            <p className="mb-1 small">
-              <strong>WhatsApp:</strong>{" "}
-              <a 
-                href="https://wa.me/56930722838" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-white text-decoration-underline"
-              >
-                +56 9 30722838
-              </a>
-            </p>
-            <p className="mb-0 small">
-              <strong>Correo:</strong>{" "}
-              <a 
-                href="mailto:vete_san_marcoR@gmail.com" 
-                className="text-white text-decoration-underline"
-              >
-                vete_san_marcoR@gmail.com
-              </a>
+        {/* Tres columnas (4 + 5 + 3 = 12). En celular se apilan centradas. */}
+        <div className="row g-4 text-center text-md-start">
+          {/* COLUMNA 1: nombre de la veterinaria */}
+          <div className="col-12 col-md-4">
+            <h3 className="vet-footer-titulo">
+              <span aria-hidden="true">🐾</span> Veterinaria San Marcos
+            </h3>
+            <p className="vet-footer-texto">
+              Cuidando a tus mascotas en Rancagua desde 2009.
             </p>
           </div>
 
-          {/* COLUMNA 3: Redes Sociales (Alineadas como botones/enlaces interactivos) */}
-          <div className="footer-redes">
-            <a 
-              href="https://instagram.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="btn btn-outline-light btn-sm rounded-pill px-3"
-            >
-              Instagram
-            </a>
+          {/* COLUMNA 2: datos de contacto (un poco más ancha) */}
+          <div className="col-12 col-md-5">
+            <h3 className="vet-footer-titulo">Contacto</h3>
+            <ul className="vet-footer-lista">
+              <li>
+                <strong>WhatsApp:</strong>{" "}
+                <a
+                  href={contacto.whatsappEnlace}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-nowrap"
+                >
+                  {contacto.whatsapp}
+                </a>
+              </li>
+              <li>
+                <strong>Correo:</strong>{" "}
+                <a href={`mailto:${contacto.correo}`}>
+                  {contacto.correo}
+                </a>
+              </li>
+              <li>
+                <strong>Dirección:</strong> {contacto.direccion}
+              </li>
+              <li>
+                <strong>Horario:</strong> {contacto.horario}
+              </li>
+            </ul>
           </div>
 
+          {/* COLUMNA 3: redes y contacto */}
+          <div className="col-12 col-md-3">
+            <h3 className="vet-footer-titulo">Síguenos</h3>
+            <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+              <a
+                href={contacto.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline-light btn-sm rounded-pill px-3"
+              >
+                Instagram
+              </a>
+              <Link
+                to="/contacto"
+                className="btn btn-outline-light btn-sm rounded-pill px-3"
+              >
+                Escríbenos
+              </Link>
+            </div>
+          </div>
         </div>
 
+        {/* Franja final con el copyright. */}
+        <p className="vet-footer-copy">
+          © {new Date().getFullYear()} Veterinaria San Marcos. Todos los
+          derechos reservados.
+        </p>
       </div>
     </footer>
   );
