@@ -10,6 +10,7 @@ import Citas from "./pages/Citas";
 import Contacto from "./pages/Contacto";
 
 import RutaProtegida from "./routes/RutaProtegida";
+import VerDetalles from "./pages/VerDetalles";
 
 function App() {
   return (
@@ -20,6 +21,15 @@ function App() {
       <Route path="/login" element={<Login />} />
 
       <Route path="/registro" element={<Registro />} />
+
+          <Route
+      path="/detalle/:id"
+      element={
+        <RutaProtegida rol="cliente">
+          <VerDetalles />
+        </RutaProtegida>
+      }
+    />
 
       {/* Conectamos /admin con el panel y comprobamos el rol. */}
       <Route

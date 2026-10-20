@@ -1,13 +1,23 @@
+import { Link, useNavigate } from "react-router-dom";
 import Boton from "../atoms/Boton";
+import Servicios from "../organisms/Servicios";
 
 // definimos las props con typeScript
 interface CardServicioProps {
+    id: number;
   titulo: string;
   descripcion: string;
   imagen: string;
+  onClickDetails?: () => void;
 }
 
-function CardServicio({ titulo, descripcion, imagen }: CardServicioProps) {
+function CardServicio({ id, titulo, descripcion, imagen, onClickDetails}: CardServicioProps) {
+    const navigate = useNavigate();
+
+  const handleVerDetalle = () => {
+    // 👈 2. Usamos directamente la variable `id`
+    navigate(`/detalle/${id}`);
+  };
     return(
         <div className="card-servicio">
             {/*Contendor de la imagen*/}
@@ -22,7 +32,9 @@ function CardServicio({ titulo, descripcion, imagen }: CardServicioProps) {
                 <h3 className="card-titulo">{titulo}</h3>
                 <p className="card-descripcion">{descripcion}</p>
                 {/*Usasmos nuestro boton ya creado anteriormente*/}
-                <Boton texto="Ver Detalles" variante="color" />            
+                
+                <Boton texto="Ver Detalles" variante="color" onClick={onClickDetails} /> 
+                           
             </div>
         </div>
     );
