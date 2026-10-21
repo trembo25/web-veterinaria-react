@@ -7,6 +7,14 @@ function NavBar() {
   const navegar = useNavigate();
   const { usuario, logout } = useAuth();
 
+  // true solo cuando inició sesión el administrador.
+  const esAdmin = usuario?.rol === "admin";
+
+  // La primera opción del menú cambia según quién inició sesión.
+  const opcionPrincipal = esAdmin
+    ? { texto: "Panel de control", alElegir: () => navegar("/admin") }
+    : { texto: "Citas", alElegir: () => navegar("/citas") };
+
   function cerrarSesion() {
     logout();
     navegar("/");
@@ -32,11 +40,14 @@ function NavBar() {
 
       {/* Las acciones ocupan toda la segunda fila. */}
       <div className="vet-actions">
-        <Boton
-          texto="Agendar Cita"
-          variante="color"
-          onClick={() => navegar("/agenda")}
-        />
+        {/* El admin no agenda citas, por eso a él no le mostramos este botón. */}
+        {!esAdmin && (
+          <Boton
+            texto="Agendar Cita"
+            variante="color"
+            onClick={() => navegar("/agenda")}
+          />
+        )}
 
         <Boton
           texto="Contáctanos"
@@ -50,23 +61,10 @@ function NavBar() {
               Hola, {usuario.nombre}
             </span>
 
-            {usuario.rol === "admin" && (
-              <Boton
-                texto="Volver al panel"
-                variante="transparente"
-                onClick={() => navegar("/admin")}
-              />
-            )}
-
             {/* Las tres rayas abren el menú de la cuenta. */}
             <MenuDesplegable
               opciones={[
-                {
-                  texto: "Citas",
-                  // El admin ve las citas en su panel; el cliente, en /citas.
-                  alElegir: () =>
-                    navegar(usuario.rol === "admin" ? "/admin" : "/citas"),
-                },
+                opcionPrincipal,
                 {
                   texto: "Salir",
                   alElegir: cerrarSesion,
