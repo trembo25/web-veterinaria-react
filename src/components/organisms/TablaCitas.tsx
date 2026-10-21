@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Cita } from "../../types";
 
 function leerCitas(): Cita[] {
@@ -18,8 +19,20 @@ function leerCitas(): Cita[] {
 }
 
 function TablaCitas() {
-  // Recuperamos las citas guardadas por el módulo de agendamiento.
-  const citas = leerCitas();
+  const [citas, setCitas] = useState<Cita[]>(leerCitas);
+
+  function eliminarCita(id: Cita["id"]) {
+    if (!window.confirm("¿Estás seguro de eliminar esta cita?")) {
+      return;
+    }
+
+    // se crea una lista sin la cita seleccionada
+    const nuevasCitas = citas.filter((cita) => cita.id !== id);
+
+    // Guardamos los cambios y actualizamos la tabla
+    localStorage.setItem("citas", JSON.stringify(nuevasCitas));
+    setCitas(nuevasCitas);
+  }
 
   return (
     <section className="admin-seccion">
@@ -40,6 +53,7 @@ function TablaCitas() {
                 <th scope="col">Mascota</th>
                 <th scope="col">Servicio</th>
                 <th scope="col">Fecha y hora</th>
+                <th scope="col">Acciones</th>
               </tr>
             </thead>
 
@@ -52,6 +66,15 @@ function TablaCitas() {
                   <td>
                     {new Date(cita.fecha).toLocaleString("es-CL")}
                   </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={() => eliminarCita(cita.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -62,5 +85,4 @@ function TablaCitas() {
   );
 }
 
-// Permite importarlo con: import TablaCitas from "...";
 export default TablaCitas;
