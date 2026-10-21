@@ -1,3 +1,4 @@
+
 interface BotonProps {
   texto: string;
   type?: 'button' | 'submit';

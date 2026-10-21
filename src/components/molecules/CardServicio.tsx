@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import Boton from "../atoms/Boton";
+import BotonVerDetalle from "../atoms/BotonVerDetalle";
 import Servicios from "../organisms/Servicios";
 
 // definimos las props con typeScript
@@ -33,7 +33,7 @@ function CardServicio({ id, titulo, descripcion, imagen, onClickDetails}: CardSe
                 <p className="card-descripcion">{descripcion}</p>
                 {/*Usasmos nuestro boton ya creado anteriormente*/}
                 
-                <Boton texto="Ver Detalles" variante="color" onClick={onClickDetails} /> 
+                <BotonVerDetalle id={id} /> 
                            
             </div>
         </div>

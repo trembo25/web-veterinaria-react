@@ -1,6 +1,7 @@
 import CardServicio from "../molecules/CardServicio";
 import { obtenerServicios } from "../../data/servicios";
 
+
 function Servicios() {
   // Leemos la lista actual cada vez que se renderiza este componente.
   const servicios = obtenerServicios();
@@ -18,6 +19,7 @@ function Servicios() {
           {servicios.map((servicio) => (
             <CardServicio
               key={servicio.id}
+              id={servicio.id}
               titulo={servicio.titulo}
               descripcion={servicio.descripcion}
               imagen={servicio.imagen}

@@ -23,12 +23,8 @@ function App() {
       <Route path="/registro" element={<Registro />} />
 
           <Route
-      path="/detalle/:id"
-      element={
-        <RutaProtegida rol="cliente">
-          <VerDetalles />
-        </RutaProtegida>
-      }
+      path="/VerDetalle/:id"
+      element={<VerDetalles />}
     />
 
       {/* Conectamos /admin con el panel y comprobamos el rol. */}
