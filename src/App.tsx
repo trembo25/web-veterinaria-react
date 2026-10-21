@@ -8,66 +8,71 @@ import PanelAdmin from "./pages/PanelAdmin";
 import Agendar from "./pages/Agenda";
 import Citas from "./pages/Citas";
 import Contacto from "./pages/Contacto";
-
+import Nosotros from "./pages/Nosotros";
 import RutaProtegida from "./routes/RutaProtegida";
+import ManejoScroll from "./routes/ManejoScroll";
 import VerDetalles from "./pages/VerDetalles";
 
 function App() {
   return (
-    <Routes>
-      {/* Páginas públicas. */}
-      <Route path="/" element={<Inicio />} />
+    <>
+      {/* Sube al inicio de cada página, o baja a la sección del "#". */}
+      <ManejoScroll />
 
-      <Route path="/login" element={<Login />} />
+      <Routes>
+        {/* Páginas públicas. */}
+        <Route path="/" element={<Inicio />} />
 
-      <Route path="/registro" element={<Registro />} />
+        <Route path="/login" element={<Login />} />
 
-          <Route
-      path="/VerDetalle/:id"
-      element={<VerDetalles />}
-    />
+        <Route path="/registro" element={<Registro />} />
 
-      {/* Conectamos /admin con el panel y comprobamos el rol. */}
-      <Route
-        path="/admin"
-        element={
-          <RutaProtegida rol="admin">
-            <PanelAdmin />
-          </RutaProtegida>
-        }
-      />
+        <Route path="/VerDetalle/:id" element={<VerDetalles />} />
 
-      {/* Si una dirección no existe, mostramos un mensaje
-          en lugar de dejar la pantalla completamente vacía. */}
+        {/* Conectamos /admin con el panel y comprobamos el rol. */}
         <Route
-        path="/agenda"
-        element={
-          <RutaProtegida rol="cliente">
-            <Agendar />
-          </RutaProtegida>
-        }
-      />
+          path="/admin"
+          element={
+            <RutaProtegida rol="admin">
+              <PanelAdmin />
+            </RutaProtegida>
+          }
+        />
 
-            <Route
-        path="/citas"
-        element={
-          <RutaProtegida rol="cliente">
-            <Citas />
-          </RutaProtegida>
-        }
-      />
+        <Route
+          path="/agenda"
+          element={
+            <RutaProtegida rol="cliente">
+              <Agendar />
+            </RutaProtegida>
+          }
+        />
 
-      <Route
-        path="*"
-        element={
-          <p style={{ padding: "24px", color: "#111" }}>
-            Página no encontrada.
-          </p>
-        }
-      />
+        <Route
+          path="/citas"
+          element={
+            <RutaProtegida rol="cliente">
+              <Citas />
+            </RutaProtegida>
+          }
+        />
 
-      <Route path="/contacto" element={<Contacto />} />
-    </Routes>
+        {/* Si una dirección no existe, mostramos un mensaje
+            en lugar de dejar la pantalla completamente vacía. */}
+        <Route
+          path="*"
+          element={
+            <p style={{ padding: "24px", color: "#111" }}>
+              Página no encontrada.
+            </p>
+          }
+        />
+
+        <Route path="/contacto" element={<Contacto />} />
+
+        <Route path="/nosotros" element={<Nosotros />} />
+      </Routes>
+    </>
   );
 }
 

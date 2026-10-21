@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import Boton from "../atoms/Boton";
 import MenuDesplegable from "../molecules/MenuDesplegable";
 import { useAuth } from "../../context/AuthContext";
@@ -19,9 +19,15 @@ function NavBar() {
     >
       {/* Estos enlaces se muestran en la primera fila. */}
       <div className="vet-links">
-        <a href="#inicio">Inicio</a>
-        <a href="#servicios">Servicios</a>
-        <a href="#nosotros">Nosotros</a>
+        {/* NavLink agrega la clase "active" al enlace de la página actual. */}
+        <NavLink to="/" end>
+          Inicio
+        </NavLink>
+
+        {/* Va al inicio y ManejoScroll baja hasta id="servicios". */}
+        <Link to="/#servicios">Servicios</Link>
+
+        <NavLink to="/nosotros">Nosotros</NavLink>
       </div>
 
       {/* Las acciones ocupan toda la segunda fila. */}

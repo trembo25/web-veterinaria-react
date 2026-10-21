@@ -115,6 +115,12 @@ body {
   color: #0f766e;
 }
 
+/* Enlace de la página actual (NavLink le agrega la clase "active"). */
+.vet-header .vet-links a.active {
+  color: #0f766e;
+  font-weight: 700;
+}
+
 .vet-header .vet-links a:focus-visible {
   outline: 3px solid #183d59;
   outline-offset: 4px;
@@ -707,4 +713,107 @@ body {
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.875rem;
   text-align: center;
+}
+
+/* =========================================================
+   10. PÁGINA NOSOTROS
+   La usan pages/Nosotros.tsx y sus organismos Nosotros...
+   ========================================================= */
+
+/* Texto pequeño sobre el título ("Sobre nosotros"), en NosotrosPresentacion. */
+.hero-texto .nosotros-etiqueta {
+  margin: 0 0 8px;
+  color: #0d9488;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Contenedor de cada sección, con el mismo ancho que el hero. */
+.nosotros-seccion {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 50px;
+  text-align: center;
+}
+
+
+/* ---------------------------------------------------------
+   10.1. Tarjeta de cifra (CardNosotrosCifra)
+   --------------------------------------------------------- */
+
+.card-nosotros-cifra {
+  height: 100%;
+  padding: 24px 16px;
+  border-radius: 16px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card-nosotros-cifra .card-nosotros-cifra-numero {
+  margin: 0 0 6px;
+  color: #0d9488;
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.card-nosotros-cifra .card-nosotros-cifra-texto {
+  margin: 0;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+
+/* ---------------------------------------------------------
+   10.2. Tarjeta de misión y visión (CardNosotrosMision)
+   --------------------------------------------------------- */
+
+.card-nosotros-mision {
+  height: 100%;
+  padding: 28px;
+  border-left: 6px solid #0d9488;
+  border-radius: 16px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: left;
+}
+
+.card-nosotros-mision h3 {
+  margin: 0 0 12px;
+  color: #1e1b4b;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.card-nosotros-mision p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+
+/* ---------------------------------------------------------
+   10.3. Llamado final (NosotrosLlamado)
+   --------------------------------------------------------- */
+
+.nosotros-llamado {
+  padding: 40px 20px;
+  border-radius: 24px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.nosotros-llamado h2 {
+  margin: 0 0 8px;
+  color: #1e1b4b;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.nosotros-llamado p {
+  margin: 0 0 24px;
+  color: #4b5563;
 }
