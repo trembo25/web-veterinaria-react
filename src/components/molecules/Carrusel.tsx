@@ -1,6 +1,6 @@
 function Carrusel() {
     return (
-        <div id="carruselVeterinaria" className="carousel slide" data-bs-ride="carousel">
+            <div id="carruselVeterinaria" className="carousel slide" data-bs-ride="carousel">
             {/* indicadores (puntitos) */}
             <div className="carousel-indicators">
                 <button

@@ -12,6 +12,20 @@ body {
   color: #111;
 }
 
+/* Espacio entre el contenido y el borde de la pantalla.
+   Lo usan la barra, el hero, los servicios, Nosotros y el footer:
+   para cambiarlo en toda la página, basta cambiar este número. */
+:root {
+  --margen-pagina: 40px;
+}
+
+/* En celulares, menos espacio para aprovechar la pantalla. */
+@media (max-width: 768px) {
+  :root {
+    --margen-pagina: 15px;
+  }
+}
+
 /* Los elementos de nuestras secciones incluyen el padding
    y los bordes dentro de su ancho declarado. */
 .vet-header,
@@ -44,7 +58,7 @@ body {
   justify-content: space-between;
   gap: 20px;
 
-  padding: 20px 24px;
+  padding: 20px var(--margen-pagina);
   background-color: #66c6fd;
   color: #111;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -325,9 +339,7 @@ body {
   gap: 40px;
 
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 60px 20px;
+  padding: 60px var(--margen-pagina);
 }
 
 
@@ -397,10 +409,10 @@ body {
   justify-content: center;
 }
 
+/* La foto ocupa todo el ancho de su mitad (antes tenía un tope de 500 px). */
 .hero-imagen img {
   display: block;
   width: 100%;
-  max-width: 500px;
   height: auto;
   object-fit: cover;
   border-radius: 24px;
@@ -412,7 +424,7 @@ body {
    ========================================================= */
 
 .seccion-servicios {
-  padding: 50px 20px;
+  padding: 50px var(--margen-pagina);
   background-color: #f8fafc;
   text-align: center;
 }
@@ -427,17 +439,14 @@ body {
 
 /* ---------------------------------------------------------
    6.1. Distribución de las tarjetas
+   Cuadrícula: caben tantas columnas como se pueda, cada una
+   de al menos 210 px, y se estiran hasta llenar la fila.
    --------------------------------------------------------- */
 
 .servicios-grid {
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 24px;
-
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 
@@ -449,8 +458,7 @@ body {
   display: flex;
   flex-direction: column;
 
-  width: 260px;
-  max-width: 100%;
+  /* Sin ancho fijo: la cuadrícula decide cuánto mide cada tarjeta. */
   overflow: hidden;
 
   background-color: #fff;
@@ -675,6 +683,13 @@ body {
   color: #fff;
 }
 
+/* Las columnas del footer usan todo el ancho,
+   con el mismo margen que el resto de la página. */
+.vet-footer .container {
+  max-width: none;
+  padding-inline: var(--margen-pagina);
+}
+
 .vet-footer .vet-footer-titulo {
   margin-bottom: 12px;
   font-size: 1.1rem;
@@ -730,12 +745,10 @@ body {
   text-transform: uppercase;
 }
 
-/* Contenedor de cada sección, con el mismo ancho que el hero. */
+/* Contenedor de cada sección, con el mismo margen que el hero. */
 .nosotros-seccion {
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px 50px;
+  padding: 0 var(--margen-pagina) 50px;
   text-align: center;
 }
 

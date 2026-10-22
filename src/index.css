@@ -50,12 +50,12 @@
   }
 }
 
+/* Contenedor de toda la aplicación (el <div id="root"> de index.html).
+   Ocupa todo el ancho de la ventana: el contenido se centra
+   en cada sección (columna de 1200 px), no aquí. */
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
+  width: 100%;
   text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
