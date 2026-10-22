@@ -7,6 +7,9 @@ type Props = {
   nombre: string;
   valor: string;
   alCambiar: (valor: string) => void;
+  // Opcionales: solo los usa el campo de fecha de la agenda.
+  min?: string;
+  max?: string;
 };
 
 function CampoFormulario({
@@ -15,6 +18,9 @@ function CampoFormulario({
   nombre,
   valor,
   alCambiar,
+  min,
+  max
+  
 }: Props) {
   return (
     <div className="mb-3">
@@ -30,6 +36,8 @@ function CampoFormulario({
         nombre={nombre}
         valor={valor}
         alCambiar={alCambiar}
+        min={min}
+        max={max}
       />
     </div>
   );
