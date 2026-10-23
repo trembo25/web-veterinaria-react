@@ -1,43 +1,53 @@
-import { Link, useNavigate } from "react-router-dom";
 import BotonVerDetalle from "../atoms/BotonVerDetalle";
-import Servicios from "../organisms/Servicios";
 
-// definimos las props con typeScript
+// 1. Asegúrate de declarar la interfaz con los precios
 interface CardServicioProps {
-    id: number;
+  id: number;
   titulo: string;
   descripcion: string;
   imagen: string;
-  onClickDetails?: () => void;
+  precio?: string;
+  precioAnterior?: string;
 }
 
-function CardServicio({ id, titulo, descripcion, imagen, onClickDetails}: CardServicioProps) {
-    const navigate = useNavigate();
+// 2. Aplica la interfaz a la función
+function CardServicio({ 
+  id, 
+  titulo, 
+  descripcion, 
+  imagen, 
+  precio, 
+  precioAnterior 
+}: CardServicioProps) {
+  return (
+    <div className="card-servicio h-100 d-flex flex-column">
+      <div className="card-imagen-container">
+        <img className="card-imagen" 
+        src={imagen} 
+        alt={titulo} />
+      </div>
 
-  const handleVerDetalle = () => {
-    // 👈 2. Usamos directamente la variable `id`
-    navigate(`/detalle/${id}`);
-  };
-    return(
-        <div className="card-servicio">
-            {/*Contendor de la imagen*/}
-            <div className="card-imagen-container">
-                <img 
-                className="card-imagen"
-                src={imagen} 
-                alt={titulo} />
-            </div>
-            {/* Contenido de la Card */}
-            <div className="card-body">
-                <h3 className="card-titulo">{titulo}</h3>
-                <p className="card-descripcion">{descripcion}</p>
-                {/*Usasmos nuestro boton ya creado anteriormente*/}
-                
-                <BotonVerDetalle id={id} /> 
-                           
-            </div>
+      <div className="card-body d-flex flex-column flex-grow-1">
+        <h3 className="card-titulo">{titulo}</h3>
+        
+        <p className="card-descripcion flex-grow-1">{descripcion}</p>
+
+        {/* Sección del fondo con los precios y el botón alineado */}
+        <div className="mt-auto">
+          <div className="card-precios">
+            {precioAnterior && (
+              <span className="precio-anterior">{precioAnterior}</span>
+            )}
+            {precio && <span className="precio-actual">{precio}</span>}
+          </div>
+
+          <div className="mt-2">
+            <BotonVerDetalle id={id} />
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default CardServicio;

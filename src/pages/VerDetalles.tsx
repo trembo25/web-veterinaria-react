@@ -1,63 +1,91 @@
-import React from 'react';
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { obtenerServicios } from "../data/servicios";
+import Boton from "../components/atoms/Boton";
 
-import { useParams } from 'react-router-dom';
+function VerDetalles() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const servicios = obtenerServicios();
 
-// Datos de ejemplo según las tarjetas de tu diseño
-const productos = [
-      {
-    id: 1,
-    titulo: 'Consulta Veterinaria',
-    descripcion: "Ofrecemos consultas veterinarias para diagnosticar y tratar enfermedades en tus mascotas.",
-    imagen: "/images/atencion.jpeg"// ajusta la ruta a tu imagen
-  },
-  {
-     id: 2,
-    titulo: "Vacunación",
-    descripcion:
-      "Protege a tus mascotas con nuestro servicio de vacunación, asegurando su salud y bienestar.",
-    imagen: "src/assets/images/vacuancion.jpeg"
-  },
-  {
-  id: 3,
-    titulo: "Cirugía Menor",
-    descripcion:
-      "Realizamos procedimientos quirúrgicos seguros y efectivos para el cuidado de tus mascotas.",
-    imagen: "src/assets/images/capacitados.jpeg"
-  },
-   {
- id: 4,
-    titulo: "Baño y Peluquería",
-    descripcion:
-      "Mantén a tus mascotas limpias y con estilo con nuestro servicio de baño y peluquería.",
-    imagen: "src/assets/images/peluqueria.jpeg"
-  },
-  {
-    id: 5,
-    titulo: "Hospitalización",
-    descripcion:
-      "Ofrecemos hospitalización para mascotas que requieren atención médica continua.",
-    imagen: "src/assets/images/hospitalizacion.jpeg"
-  },
-]
+  const servicio = servicios.find((s) => s.id === Number(id));
 
-function VerDetalle() {
-    const {id} = useParams()
+  if (!servicio) {
+    return (
+      <div className="container text-center py-5">
+        <h2>Servicio no encontrado</h2>
+        <Link to="/" className="btn btn-outline-primary mt-3">
+          Volver al Inicio
+        </Link>
+      </div>
+    );
+  }
 
-    const producto = productos.find(
-        producto => producto.id === Number(id)
-    )
   return (
-    <div>
-      <h1> Detalle Productos</h1>
-      <img 
-      src={producto?.imagen}
-      alt={producto?.titulo}
-      style={{ width: '300px'}}
-       />
-       <h2> {producto?.titulo}</h2>
-       <p>{producto?.descripcion}</p>
+    <div className="container py-5">
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-10 col-lg-8">
+          <div className="card shadow-sm border-0 rounded-4 overflow-hidden">
+            <div className="row g-0">
+              {/* Imagen del servicio */}
+              <div className="col-md-6 position-relative">
+                <img
+                  src={servicio.imagen}
+                  alt={servicio.titulo}
+                  className="img-fluid w-100 h-100"
+                  style={{ objectFit: "cover", minHeight: "280px" }}
+                />
+              </div>
+
+              {/* Información del servicio */}
+              <div className="col-md-6 p-4 d-flex flex-column justify-content-between">
+                <div>
+                  <span className="badge bg-light text-primary border mb-2 px-3 py-2 rounded-pill fw-semibold">
+                    Detalle del Servicio
+                  </span>
+                  <h2 className="card-title fw-bold text-dark mb-3">
+                    {servicio.titulo}
+                  </h2>
+
+                  <p className="card-text text-muted mb-4 lead fs-6">
+                    {servicio.descripcion}
+                  </p>
+
+                  {/* Sección de Precios */}
+                  <div className="d-flex align-items-baseline gap-2 mb-4">
+                    {servicio.precioAnterior && (
+                      <span className="text-decoration-line-through text-muted fs-5">
+                        {servicio.precioAnterior}
+                      </span>
+                    )}
+                    {servicio.precio && (
+                      <span className="fs-2 fw-bold text-dark">
+                        {servicio.precio}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Botones de acción */}
+                <div className="d-flex flex-column gap-2 mt-3">
+                  <Boton
+                    texto="Agendar cita"
+                    variante="color"
+                    onClick={() => navigate("/citas")}
+                  />
+                  <Link
+                    to="/"
+                    className="btn btn-outline-secondary rounded-3 fw-semibold text-center py-2"
+                  >
+                    Volver al Inicio
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-export default VerDetalle;
+export default VerDetalles;

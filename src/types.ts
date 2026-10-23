@@ -24,6 +24,8 @@ export type Servicio = {
   titulo: string;
   descripcion: string;
   imagen: string;
+  precio?: string;         // 👈 Agrega esta línea
+  precioAnterior?: string;
 };
 
 // Datos de una cita agendada.

@@ -16,6 +16,8 @@ const serviciosIniciales: Servicio[] = [
     descripcion:
       "Ofrecemos consultas veterinarias para diagnosticar y tratar enfermedades en tus mascotas.",
     imagen: atencion,
+    precio: "$23.000",
+    
   },
   {
     id: 2,
@@ -23,6 +25,7 @@ const serviciosIniciales: Servicio[] = [
     descripcion:
       "Protege a tus mascotas con nuestro servicio de vacunación, asegurando su salud y bienestar.",
     imagen: vacunacion,
+    precio: "$45.000"
   },
   {
     id: 3,
@@ -30,6 +33,7 @@ const serviciosIniciales: Servicio[] = [
     descripcion:
       "Realizamos procedimientos quirúrgicos seguros y efectivos para el cuidado de tus mascotas.",
     imagen: cirugia,
+    precio: "$89.000"
   },
   {
     id: 4,
@@ -37,6 +41,7 @@ const serviciosIniciales: Servicio[] = [
     descripcion:
       "Mantén a tus mascotas limpias y con estilo con nuestro servicio de baño y peluquería.",
     imagen: peluqueria,
+    precio: "$25.000"
   },
   {
     id: 5,
@@ -44,6 +49,7 @@ const serviciosIniciales: Servicio[] = [
     descripcion:
       "Ofrecemos hospitalización para mascotas que requieren atención médica continua.",
     imagen: hospitalizacion,
+    precio: "$150.000"
   },
 ];
 

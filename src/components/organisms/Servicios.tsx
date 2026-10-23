@@ -1,7 +1,6 @@
 import CardServicio from "../molecules/CardServicio";
 import { obtenerServicios } from "../../data/servicios";
 
-
 function Servicios() {
   // Leemos la lista actual cada vez que se renderiza este componente.
   const servicios = obtenerServicios();
@@ -15,17 +14,19 @@ function Servicios() {
       {servicios.length === 0 ? (
         <p>No hay servicios disponibles por el momento.</p>
       ) : (
-        <div className="servicios-grid">
-          {servicios.map((servicio) => (
-            <CardServicio
-              key={servicio.id}
-              id={servicio.id}
-              titulo={servicio.titulo}
-              descripcion={servicio.descripcion}
-              imagen={servicio.imagen}
-            />
-          ))}
-        </div>
+      <div className="servicios-grid">
+  {servicios.map((servicio) => (
+    <CardServicio
+      key={servicio.id}
+      id={servicio.id}
+      titulo={servicio.titulo}
+      descripcion={servicio.descripcion}
+      imagen={servicio.imagen}
+      precio={servicio.precio || ""}
+      precioAnterior={servicio.precioAnterior}
+    />
+  ))}
+</div>
       )}
     </section>
   );
