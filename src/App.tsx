@@ -13,6 +13,7 @@ import RutaProtegida from "./routes/RutaProtegida";
 import ManejoScroll from "./routes/ManejoScroll";
 import VerDetalles from "./pages/VerDetalles";
 import PagoCita from "./pages/PagoCita";
+import RestablecerContrasena from "./pages/RestablecerContrasena";
 
 function App() {
   return (
@@ -27,6 +28,9 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         <Route path="/registro" element={<Registro />} />
+
+        {/* Restablecer la contraseña con un código simulado. */}
+        <Route path="/restablecer-contrasena" element={<RestablecerContrasena />} />
 
         <Route path="/VerDetalle/:id" element={<VerDetalles />} />
 

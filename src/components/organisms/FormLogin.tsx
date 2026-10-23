@@ -4,8 +4,23 @@ import CampoFormulario from "../molecules/CampoFormulario";
 import { useAuth } from "../../context/AuthContext";
 
 function FormLogin() {
+  // Leemos los datos que llegan desde otra página.
+  // Va antes de los estados porque el correo puede venir ya escrito.
+  const ubicacion = useLocation();
+
+  const estado = ubicacion.state as {
+    from?: string;
+
+    // Llegan al volver de "Restablecer contraseña".
+    correo?: string;
+    contrasenaActualizada?: boolean;
+  } | null;
+
+  const destino = estado?.from;
+
   // Guardamos los valores escritos en los campos.
-  const [correo, setCorreo] = useState("");
+  // Si viene un correo desde "Restablecer contraseña", aparece ya escrito.
+  const [correo, setCorreo] = useState(estado?.correo ?? "");
   const [contrasena, setContrasena] = useState("");
 
   // Guardamos el mensaje de error que mostraremos en pantalla.
@@ -16,15 +31,6 @@ function FormLogin() {
 
   // Permite cambiar de página desde el código.
   const navegar = useNavigate();
-
-  const ubicacion = useLocation();
-
-  const estado = ubicacion.state as {
-    from?: string;
-  } | null;
-
-  const destino = estado?.from;
-  
 
   const manejarEnvio = (e: SubmitEvent<HTMLFormElement>) => {
     // Evitamos que el formulario recargue la página.
@@ -73,6 +79,14 @@ function FormLogin() {
 
   return (
     <form onSubmit={manejarEnvio} noValidate>
+      {/* Aviso verde al volver de "Restablecer contraseña".
+          Se oculta si aparece un error, para no mostrar dos avisos juntos. */}
+      {estado?.contrasenaActualizada && error === "" && (
+        <div className="alert alert-success" role="status">
+          Contraseña actualizada. Inicia sesión con tu nueva contraseña.
+        </div>
+      )}
+
       <CampoFormulario
         etiqueta="Correo electrónico"
         tipo="email"
@@ -88,6 +102,16 @@ function FormLogin() {
         valor={contrasena}
         alCambiar={setContrasena}
       />
+
+      {/* Enlace bajo la contraseña, a la derecha (estilo en App.css, sección 7.1).
+          Conserva la página a la que quería ir, igual que "Regístrate". */}
+      <Link
+        to="/restablecer-contrasena"
+        state={{ from: destino }}
+        className="enlace-olvide-contrasena"
+      >
+        ¿Olvidaste tu contraseña?
+      </Link>
 
       {/* Mostramos este bloque solamente cuando existe un error. */}
       {error !== "" && (

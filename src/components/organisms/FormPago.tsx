@@ -18,7 +18,7 @@ type Props = {
 // ---------- Funciones de apoyo (no usan estado) ----------
 
 // Deja solo números (máximo 16) en grupos de 4.
-// Ej: "4242424242424242" → "4242 4242 4242 4242".
+// Ej: "1234567891234566" → "1234 5678 9123 4566".
 function formatearNumero(texto: string) {
   const digitos = texto.replace(/\D/g, "").slice(0, 16);
 
@@ -32,31 +32,6 @@ function formatearVencimiento(texto: string) {
   return digitos.length > 2
     ? `${digitos.slice(0, 2)}/${digitos.slice(2)}`
     : digitos;
-}
-
-// Algoritmo de Luhn: la revisión que usan las tarjetas reales
-// para detectar un número mal escrito.
-function pasaLuhn(digitos: string) {
-  let suma = 0;
-
-  // Recorremos de derecha a izquierda y duplicamos una cifra sí y otra no.
-  for (let i = 0; i < digitos.length; i++) {
-    let cifra = Number(digitos[digitos.length - 1 - i]);
-
-    if (i % 2 === 1) {
-      cifra = cifra * 2;
-
-      // Si al duplicar queda de 2 cifras (ej: 14), se le resta 9 (14 → 5).
-      if (cifra > 9) {
-        cifra = cifra - 9;
-      }
-    }
-
-    suma = suma + cifra;
-  }
-
-  // El número es válido si la suma termina en 0.
-  return suma % 10 === 0;
 }
 
 // Código del comprobante con los últimos 6 dígitos de la hora actual.
@@ -81,15 +56,13 @@ function FormPago({ monto, alPagar }: Props) {
 
   // Revisa la tarjeta. Devuelve el mensaje de error, o "" si todo está bien.
   function revisarTarjeta() {
-    // "4242 4242 4242 4242" → "4242424242424242".
+    // "1234 5678 9123 4566" → "1234567891234566".
     const digitos = numero.replace(/\s/g, "");
 
+    // Pago simulado: sirve cualquier número de 16 dígitos
+    // (no revisamos si la tarjeta existe de verdad).
     if (digitos.length !== 16) {
       return "El número de la tarjeta debe tener 16 dígitos";
-    }
-
-    if (!pasaLuhn(digitos)) {
-      return "El número de la tarjeta no es válido";
     }
 
     if (nombre.trim() === "") {
@@ -144,7 +117,7 @@ function FormPago({ monto, alPagar }: Props) {
         fecha: new Date().toISOString(),
         estado: "pagado",
 
-        // Solo los últimos 4: "4242 4242 4242 4242" → "4242".
+        // Solo los últimos 4: "1234 5678 9123 4566" → "4566".
         // Nunca guardamos el número completo ni el CVV.
         ultimos4: numero.slice(-4),
       });
@@ -165,11 +138,6 @@ function FormPago({ monto, alPagar }: Props) {
   return (
     // autoComplete="off": que el navegador no ofrezca rellenar con una tarjeta real.
     <form onSubmit={manejarEnvio} noValidate autoComplete="off">
-      <div className="alert alert-info text-start" role="note">
-        <strong>Pago simulado:</strong> no se realiza ningún cobro.
-        Usa la tarjeta de prueba 4242 4242 4242 4242.
-      </div>
-
       <fieldset className="mb-3 text-start">
         <legend className="form-label fs-6">Método de pago</legend>
 

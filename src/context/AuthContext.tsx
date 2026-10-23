@@ -64,6 +64,17 @@ type AuthContextProps = {
     contrasena: string
   ) => string | null;
 
+  // Restablecer contraseña, paso 1: revisa que el correo sea de un cliente.
+  // Devuelve un mensaje de error, o null si se puede continuar.
+  revisarCorreoContrasena: (correo: string) => string | null;
+
+  // Restablecer contraseña, paso 2: guarda la nueva contraseña.
+  // Devuelve un mensaje de error, o null si se guardó.
+  restablecerContrasena: (
+    correo: string,
+    nuevaContrasena: string
+  ) => string | null;
+
   logout: () => void;
 };
 
@@ -181,6 +192,75 @@ export function AuthProvider({ children }: Props) {
     return null;
   }
 
+  // Restablecer contraseña, paso 1.
+  // Revisa que el correo pertenezca a una cuenta de cliente.
+  function revisarCorreoContrasena(correo: string): string | null {
+    const correoLimpio = correo.trim().toLowerCase();
+
+    // El administrador está escrito en el código (constante ADMIN),
+    // no en localStorage, así que su contraseña no se cambia aquí.
+    if (correoLimpio === ADMIN.email) {
+      return "La contraseña del administrador no se puede restablecer desde aquí";
+    }
+
+    const existe = leerUsuarios().some(
+      (cuenta) => cuenta.email === correoLimpio
+    );
+
+    if (!existe) {
+      return "No encontramos una cuenta con ese correo";
+    }
+
+    // null significa que se puede continuar al paso 2.
+    return null;
+  }
+
+  // Restablecer contraseña, paso 2.
+  // Cambia la contraseña de la cuenta y la guarda en localStorage.
+  function restablecerContrasena(
+    correo: string,
+    nuevaContrasena: string
+  ): string | null {
+    // Volvemos a revisar el correo: así esta función nunca cambia
+    // la contraseña del administrador ni de una cuenta que no existe.
+    const problemaCorreo = revisarCorreoContrasena(correo);
+
+    if (problemaCorreo !== null) {
+      return problemaCorreo;
+    }
+
+    if (nuevaContrasena.length < 8) {
+      return "La contraseña debe tener al menos 8 caracteres";
+    }
+
+    const correoLimpio = correo.trim().toLowerCase();
+    const usuarios = leerUsuarios();
+
+    // Solo el contexto conoce la contraseña guardada: el formulario nunca la ve.
+    const cuenta = usuarios.find(
+      (actual) => actual.email === correoLimpio
+    );
+
+    if (cuenta?.password === nuevaContrasena) {
+      return "La nueva contraseña debe ser distinta a la anterior";
+    }
+
+    // Copiamos la lista cambiando solo la contraseña de esa cuenta.
+    const listaActualizada = usuarios.map((actual) =>
+      actual.email === correoLimpio
+        ? { ...actual, password: nuevaContrasena }
+        : actual
+    );
+
+    localStorage.setItem(
+      "usuarios",
+      JSON.stringify(listaActualizada)
+    );
+
+    // null significa que la contraseña se cambió sin errores.
+    return null;
+  }
+
   function logout() {
     // Quitamos la sesión del estado y del almacenamiento.
     setUsuario(null);
@@ -193,6 +273,8 @@ export function AuthProvider({ children }: Props) {
         usuario,
         login,
         registrar,
+        revisarCorreoContrasena,
+        restablecerContrasena,
         logout,
       }}
     >

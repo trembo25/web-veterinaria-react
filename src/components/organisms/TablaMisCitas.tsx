@@ -6,6 +6,7 @@ import Boton from "../atoms/Boton";
 
 import { useAuth } from "../../context/AuthContext";
 import { obtenerCitas, guardarCitas } from "../../data/Citas";
+import { obtenerPrecio } from "../../data/servicios";
 import type { Cita } from "../../types";
 
 function TablaMisCitas() {
@@ -73,7 +74,11 @@ function TablaMisCitas() {
             <FilaCita
               key={cita.id}
               cita={cita}
+              // Las citas guardan el nombre del servicio: con él buscamos su precio.
+              precio={obtenerPrecio(cita.servicio)}
               alCancelar={() => cancelarCita(cita)}
+              // Ej: /pago/1761222000000 (el id de la cita).
+              alIrAlPago={() => navegar(`/pago/${cita.id}`)}
             />
           ))}
         </tbody>

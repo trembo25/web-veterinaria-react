@@ -561,6 +561,27 @@ body {
   outline-offset: 3px;
 }
 
+/* ---------------------------------------------------------
+   7.1. Enlace "¿Olvidaste tu contraseña?"
+   Va justo debajo del campo contraseña, a la derecha.
+   --------------------------------------------------------- */
+
+.enlace-olvide-contrasena {
+  /* Bloque del ancho de su texto: así solo el texto es clicable. */
+  display: block;
+  width: fit-content;
+
+  /* El campo de arriba deja 16 px de espacio (clase mb-3 de CampoFormulario).
+     Con -8 px el enlace queda a 8 px del campo.
+     "auto" a la izquierda lo empuja hacia la derecha. */
+  margin: -8px 0 16px auto;
+
+  /* Un poco más chica que el texto normal: 0.875 × 18 px ≈ 16 px en computador
+     y 0.875 × 16 px = 14 px en pantallas de 1024 px o menos
+     (index.css cambia ahí la letra base). */
+  font-size: 0.875em;
+}
+
 
 /* =========================================================
    8. DISEÑO RESPONSIVE
