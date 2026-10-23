@@ -1,4 +1,4 @@
-import type { Cita } from "../types";
+import type { Cita, Pago } from "../types";
 
 export function obtenerCitas(): Cita[] {
   const guardadas = localStorage.getItem("citas");
@@ -18,4 +18,15 @@ export function obtenerCitas(): Cita[] {
 
 export function guardarCitas(citas: Cita[]) {
   localStorage.setItem("citas", JSON.stringify(citas));
+}
+
+// Guarda el pago dentro de su cita y devuelve la cita ya actualizada.
+export function guardarPago(idCita: number, pago: Pago) {
+  const citas = obtenerCitas().map((cita) =>
+    cita.id === idCita ? { ...cita, pago } : cita
+  );
+
+  guardarCitas(citas);
+
+  return citas.find((cita) => cita.id === idCita);
 }

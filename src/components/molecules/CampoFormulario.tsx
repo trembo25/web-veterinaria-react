@@ -10,6 +10,9 @@ type Props = {
   // Opcionales: solo los usa el campo de fecha de la agenda.
   min?: string;
   max?: string;
+  // Opcionales: solo los usan los campos de la tarjeta en el pago.
+  placeholder?: string;
+  inputMode?: "numeric" | "text";
 };
 
 function CampoFormulario({
@@ -19,8 +22,9 @@ function CampoFormulario({
   valor,
   alCambiar,
   min,
-  max
-  
+  max,
+  placeholder,
+  inputMode,
 }: Props) {
   return (
     <div className="mb-3">
@@ -38,6 +42,8 @@ function CampoFormulario({
         alCambiar={alCambiar}
         min={min}
         max={max}
+        placeholder={placeholder}
+        inputMode={inputMode}
       />
     </div>
   );

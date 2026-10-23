@@ -1,4 +1,5 @@
 import { useState } from "react";
+import InsigniaPago from "../atoms/InsigniaPago";
 import type { Cita } from "../../types";
 
 function leerCitas(): Cita[] {
@@ -34,6 +35,22 @@ function TablaCitas() {
     setCitas(nuevasCitas);
   }
 
+  // El admin confirma que recibió una transferencia: pasa de "pendiente" a "pagado".
+  function confirmarPago(cita: Cita) {
+    if (!window.confirm(`¿Confirmas que recibiste la transferencia de ${cita.pago?.monto}?`)) {
+      return;
+    }
+
+    const nuevasCitas = citas.map((actual): Cita =>
+      actual.id === cita.id && actual.pago
+        ? { ...actual, pago: { ...actual.pago, estado: "pagado" } }
+        : actual
+    );
+
+    localStorage.setItem("citas", JSON.stringify(nuevasCitas));
+    setCitas(nuevasCitas);
+  }
+
   return (
     <section className="admin-seccion">
       <h2 className="admin-titulo-seccion">
@@ -62,11 +79,33 @@ function TablaCitas() {
                 <tr key={cita.id}>
                   <td>{cita.clienteNombre}</td>
                   <td>{cita.mascota}</td>
-                  <td>{cita.servicio}</td>
+                  <td>
+                    {cita.servicio}
+
+                    {/* Etiqueta del pago junto al servicio (sin agregar columnas).
+                        El espacio va dentro, para que sin pago el texto quede igual. */}
+                    {cita.pago && (
+                      <>
+                        {" "}
+                        <InsigniaPago estado={cita.pago.estado} />
+                      </>
+                    )}
+                  </td>
                   <td>
                     {new Date(cita.fecha).toLocaleString("es-CL")}
                   </td>
                   <td>
+                    {/* Solo las transferencias pendientes se pueden confirmar. */}
+                    {cita.pago?.estado === "pendiente" && (
+                      <button
+                        type="button"
+                        className="btn btn-outline-success btn-sm me-2"
+                        onClick={() => confirmarPago(cita)}
+                      >
+                        Confirmar pago
+                      </button>
+                    )}
+
                     <button
                       type="button"
                       className="btn btn-outline-danger btn-sm"

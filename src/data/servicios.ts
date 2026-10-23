@@ -75,3 +75,9 @@ export function obtenerServicios(): Servicio[] {
 export function guardarServicios(servicios: Servicio[]) {
   localStorage.setItem("servicios", JSON.stringify(servicios));
 }
+
+// Precio de un servicio a partir de su nombre (las citas guardan el nombre).
+// Ej: "Vacunación" → "$45.000". Si no tiene precio, devuelve undefined.
+export function obtenerPrecio(titulo: string) {
+  return obtenerServicios().find((servicio) => servicio.titulo === titulo)?.precio;
+}

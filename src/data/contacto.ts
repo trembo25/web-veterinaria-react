@@ -8,3 +8,14 @@ export const contacto = {
   correo: "vete_san_marcoR@gmail.com",
   instagram: "https://instagram.com",
 };
+
+// Cuenta para pagar por transferencia.
+// Son datos de EJEMPLO para la demostración: no es una cuenta real.
+export const cuentaPago = {
+  titular: "Veterinaria San Marcos",
+  rut: "11.111.111-1",
+  banco: "Banco de Santander",
+  tipoCuenta: "Cuenta corriente",
+  numero: "12345678",
+  correo: contacto.correo,
+};

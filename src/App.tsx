@@ -12,6 +12,7 @@ import Nosotros from "./pages/Nosotros";
 import RutaProtegida from "./routes/RutaProtegida";
 import ManejoScroll from "./routes/ManejoScroll";
 import VerDetalles from "./pages/VerDetalles";
+import PagoCita from "./pages/PagoCita";
 
 function App() {
   return (
@@ -53,6 +54,15 @@ function App() {
           element={
             <RutaProtegida rol="cliente">
               <Citas />
+            </RutaProtegida>
+          }
+        />
+                {/* Pagar una cita o ver su comprobante. :id es el id de la cita. */}
+        <Route
+          path="/pago/:id"
+          element={
+            <RutaProtegida rol="cliente">
+              <PagoCita />
             </RutaProtegida>
           }
         />
