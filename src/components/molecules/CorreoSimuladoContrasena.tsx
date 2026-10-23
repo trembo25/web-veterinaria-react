@@ -1,28 +1,23 @@
 type Props = {
-  // A quién "le llega" el correo, ej: "nacho@gmail.com".
+  // A quién "le llega" el correo, ej: "ignacio@gmail.com".
   correo: string;
 
-  // Código de 6 dígitos, ej: "482913".
+  // Código de 6 dígitos, ej: "410834".
   codigo: string;
 };
 
-// Simula el correo que enviaría la veterinaria con el código.
-// En una página real el código llega al correo y nunca se muestra en pantalla.
+// Muestra el código como el correo que enviaría la veterinaria.
+// (No hay servidor de correos: es el único lugar donde aparece el código.)
 function CorreoSimuladoContrasena({ correo, codigo }: Props) {
   return (
-    // role="status": los lectores de pantalla leen el aviso cuando aparece.
-    <div className="alert alert-info text-start" role="status">
-      <p className="fw-semibold mb-1">Correo simulado</p>
+    <div className="alert alert-light border text-start" role="status">
+      <p className="fw-semibold mb-1">Veterinaria San Marcos</p>
 
-      <p className="small mb-2">Para: {correo}</p>
+      <p className="small text-muted mb-2">Para: {correo}</p>
 
-      <p className="mb-2">
-        Tu código para restablecer la contraseña es{" "}
+      <p className="mb-0">
+        Tu código de verificación es{" "}
         <strong className="font-monospace fs-5">{codigo}</strong>
-      </p>
-
-      <p className="small mb-0">
-        Como el proyecto no tiene servidor de correos, el código aparece aquí.
       </p>
     </div>
   );
