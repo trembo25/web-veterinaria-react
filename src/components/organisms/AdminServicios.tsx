@@ -11,21 +11,30 @@ import {
 } from "../../data/servicios";
 
 // Todos los servicios nuevos utilizarán esta imagen.
-// Reutilizamos una imagen que ya existe en el proyecto.
 import imagenPredeterminada from "../../assets/images/atencion.jpeg";
 
+// Convierte "25000", "25.000" o "$25.000" en "$25.000".
+// Devuelve null si no es un número válido.
+function formatearPrecio(texto: string): string | null {
+  const digitos = texto.replace(/\D/g, "");
+
+  if (digitos === "" || Number(digitos) <= 0) {
+    return null;
+  }
+
+  return "$" + Number(digitos).toLocaleString("es-CL");
+}
+
 function AdminServicios() {
-  // Lista de servicios que mostramos en el panel.
   const [servicios, setServicios] = useState<Servicio[]>(
     obtenerServicios
   );
 
-  // El formulario ahora solo tiene dos campos.
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [precio, setPrecio] = useState("");
 
-  // null significa que estamos creando un servicio.
-  // Un id significa que estamos editando ese servicio.
+  // null = creando. Un id = editando ese servicio.
   const [editandoId, setEditandoId] = useState<number | null>(
     null
   );
@@ -35,6 +44,7 @@ function AdminServicios() {
   function limpiarFormulario() {
     setTitulo("");
     setDescripcion("");
+    setPrecio("");
     setEditandoId(null);
     setError("");
   }
@@ -52,7 +62,6 @@ function AdminServicios() {
   }
 
   function manejarEnvio(e: SubmitEvent<HTMLFormElement>) {
-    // Evitamos la recarga de la página.
     e.preventDefault();
     setError("");
 
@@ -66,17 +75,24 @@ function AdminServicios() {
       return;
     }
 
+    const precioFormateado = formatearPrecio(precio);
+
+    if (precioFormateado === null) {
+      setError("Debe ingresar un precio válido (ej: 25000)");
+      return;
+    }
+
     // Datos que podemos crear o modificar desde el formulario.
     const datos = {
       titulo: titulo.trim(),
       descripcion: descripcion.trim(),
+      precio: precioFormateado,
     };
 
     let listaActualizada: Servicio[];
 
     if (editandoId === null) {
-      // CREAR:
-      // Asignamos la imagen predeterminada automáticamente.
+      // CREAR: imagen predeterminada automática.
       const nuevoServicio: Servicio = {
         id: Date.now(),
         ...datos,
@@ -85,9 +101,7 @@ function AdminServicios() {
 
       listaActualizada = [...servicios, nuevoServicio];
     } else {
-      // EDITAR:
-      // Conservamos el id y la imagen del servicio original.
-      // Solo reemplazamos el título y la descripción.
+      // EDITAR: conservamos id e imagen, reemplazamos el resto.
       listaActualizada = servicios.map((servicio) =>
         servicio.id === editandoId
           ? { ...servicio, ...datos }
@@ -95,17 +109,16 @@ function AdminServicios() {
       );
     }
 
-    // Limpiamos el formulario únicamente si se guardó correctamente.
     if (actualizarLista(listaActualizada)) {
       limpiarFormulario();
     }
   }
 
   function editarServicio(servicio: Servicio) {
-    // Cargamos únicamente los campos que se pueden editar.
     setEditandoId(servicio.id);
     setTitulo(servicio.titulo);
     setDescripcion(servicio.descripcion);
+    setPrecio(servicio.precio ?? "");
     setError("");
   }
 
@@ -118,15 +131,12 @@ function AdminServicios() {
       return;
     }
 
-    // Creamos una lista sin el servicio seleccionado.
     const listaActualizada = servicios.filter(
       (actual) => actual.id !== servicio.id
     );
 
     const guardado = actualizarLista(listaActualizada);
 
-    // Si eliminamos el servicio que estaba en edición,
-    // también limpiamos el formulario.
     if (guardado && editandoId === servicio.id) {
       limpiarFormulario();
     }
@@ -163,6 +173,14 @@ function AdminServicios() {
           nombre="descripcionServicio"
           valor={descripcion}
           alCambiar={setDescripcion}
+        />
+
+        <CampoFormulario
+          etiqueta="Precio (CLP)"
+          tipo="text"
+          nombre="precioServicio"
+          valor={precio}
+          alCambiar={setPrecio}
         />
 
         <p className="admin-descripcion">
@@ -222,6 +240,10 @@ function AdminServicios() {
               <div className="admin-servicio-info">
                 <h4>{servicio.titulo}</h4>
                 <p>{servicio.descripcion}</p>
+                <p>
+                  <strong>Precio:</strong>{" "}
+                  {servicio.precio ?? "Sin precio"}
+                </p>
               </div>
 
               <div className="admin-acciones">

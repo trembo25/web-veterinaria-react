@@ -119,4 +119,25 @@ describe("Pruebas de TablaCitas", () => {
 
     expect(boton.textContent).toBe("Eliminar");
   });
+
+  // PRUEBA 6: la tabla usa el método responsive de Bootstrap.
+  it("usa una tabla responsive que se adapta a celular, tablet y pc", () => {
+    localStorage.setItem(
+      "citas",
+      JSON.stringify([citaEjemplo])
+    );
+
+    const { container } = render(<TablaCitas />);
+
+    // La tabla debe estar dentro de un contenedor .table-responsive.
+    const contenedor = container.querySelector(".table-responsive");
+
+    expect(contenedor).not.toBeNull();
+
+    // Y la tabla realmente debe estar dentro de ese contenedor.
+    const tabla = contenedor?.querySelector("table");
+
+    expect(tabla).not.toBeNull();
+    expect(tabla?.classList.contains("table")).toBe(true);
+  });
 });

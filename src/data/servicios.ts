@@ -1,14 +1,11 @@
 import type { Servicio } from "../types";
 
-// Importamos las imágenes que ya tiene el proyecto.
-// Conserva los nombres exactos de tus archivos.
 import atencion from "../assets/images/atencion.jpeg";
 import vacunacion from "../assets/images/vacuancion.jpeg";
 import cirugia from "../assets/images/capacitados.jpeg";
 import peluqueria from "../assets/images/peluqueria.jpeg";
 import hospitalizacion from "../assets/images/hospitalizacion.jpeg";
 
-// Lista que se utiliza cuando todavía no hay servicios guardados.
 const serviciosIniciales: Servicio[] = [
   {
     id: 1,
@@ -17,7 +14,6 @@ const serviciosIniciales: Servicio[] = [
       "Ofrecemos consultas veterinarias para diagnosticar y tratar enfermedades en tus mascotas.",
     imagen: atencion,
     precio: "$23.000",
-    
   },
   {
     id: 2,
@@ -25,7 +21,7 @@ const serviciosIniciales: Servicio[] = [
     descripcion:
       "Protege a tus mascotas con nuestro servicio de vacunación, asegurando su salud y bienestar.",
     imagen: vacunacion,
-    precio: "$45.000"
+    precio: "$45.000",
   },
   {
     id: 3,
@@ -33,7 +29,7 @@ const serviciosIniciales: Servicio[] = [
     descripcion:
       "Realizamos procedimientos quirúrgicos seguros y efectivos para el cuidado de tus mascotas.",
     imagen: cirugia,
-    precio: "$89.000"
+    precio: "$89.000",
   },
   {
     id: 4,
@@ -41,7 +37,7 @@ const serviciosIniciales: Servicio[] = [
     descripcion:
       "Mantén a tus mascotas limpias y con estilo con nuestro servicio de baño y peluquería.",
     imagen: peluqueria,
-    precio: "$25.000"
+    precio: "$25.000",
   },
   {
     id: 5,
@@ -49,15 +45,13 @@ const serviciosIniciales: Servicio[] = [
     descripcion:
       "Ofrecemos hospitalización para mascotas que requieren atención médica continua.",
     imagen: hospitalizacion,
-    precio: "$150.000"
+    precio: "$150.000",
   },
 ];
 
-// Función compartida por la página pública y el administrador.
 export function obtenerServicios(): Servicio[] {
   const guardados = localStorage.getItem("servicios");
 
-  // Si nunca se guardaron cambios, mostramos los servicios originales.
   if (guardados === null) {
     return serviciosIniciales;
   }
@@ -65,19 +59,52 @@ export function obtenerServicios(): Servicio[] {
   try {
     const datos = JSON.parse(guardados);
 
-    return Array.isArray(datos) ? datos : serviciosIniciales;
+    if (!Array.isArray(datos)) {
+      return serviciosIniciales;
+    }
+
+    // Si un servicio guardado no tiene precio, usamos el del servicio
+    // inicial con el mismo id (si existe).
+    return datos.map((servicio: Servicio) => {
+      if (servicio.precio) {
+        return servicio;
+      }
+
+      const inicial = serviciosIniciales.find(
+        (actual) => actual.id === servicio.id
+      );
+
+      return inicial?.precio
+        ? { ...servicio, precio: inicial.precio }
+        : servicio;
+    });
   } catch {
     return serviciosIniciales;
   }
 }
 
-// Convierte la lista en texto y la guarda en el navegador.
 export function guardarServicios(servicios: Servicio[]) {
   localStorage.setItem("servicios", JSON.stringify(servicios));
 }
 
-// Precio de un servicio a partir de su nombre (las citas guardan el nombre).
-// Ej: "Vacunación" → "$45.000". Si no tiene precio, devuelve undefined.
+// Minúsculas, sin espacios extra y sin tildes.
+function normalizar(texto: string) {
+  return texto
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
 export function obtenerPrecio(titulo: string) {
-  return obtenerServicios().find((servicio) => servicio.titulo === titulo)?.precio;
+  const buscado = normalizar(titulo);
+
+  const coincide = (servicio: Servicio) =>
+    normalizar(servicio.titulo) === buscado;
+
+  // Primero el servicio guardado; si no tiene precio, el inicial.
+  return (
+    obtenerServicios().find(coincide)?.precio ||
+    serviciosIniciales.find(coincide)?.precio
+  );
 }
