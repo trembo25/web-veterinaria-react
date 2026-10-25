@@ -1,93 +1,67 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-} from "vitest";
-
-import {
-  render,
-  screen,
-  cleanup,
-} from "@testing-library/react";
-
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { render, screen, cleanup } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import App from "../App"; // O importa tu componente de Página Principal (ej: Home)
+import App from "../App";
+import { AuthProvider } from "../context/AuthContext";
+
+function renderApp() {
+  return render(
+    <MemoryRouter initialEntries={["/"]}>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </MemoryRouter>
+  );
+}
 
 describe("Pruebas de la Página Principal", () => {
-  // Antes de cada prueba dejamos el almacenamiento vacío.
   beforeEach(() => {
     localStorage.clear();
+    // jsdom no implementa estas funciones y ManejoScroll las puede usar.
+    window.scrollTo = vi.fn();
+    Element.prototype.scrollIntoView = vi.fn();
   });
 
-  // Después de cada prueba limpiamos el entorno.
   afterEach(() => {
     cleanup();
     localStorage.clear();
   });
 
-  // PRUEBA 1: Verificar el botón "Inicio" en el Header
-  it("muestra el botón o enlace 'Inicio' en el header", () => {
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    );
-
-    const botonInicio = screen.getByRole("link", { name: /inicio/i });
-    expect(botonInicio).toBeDefined();
+  it("muestra 'Inicio' en el header", () => {
+    renderApp();
+    expect(
+      screen.getAllByRole("link", { name: /^inicio$/i }).length
+    ).toBeGreaterThan(0);
   });
 
-  // PRUEBA 2: Verificar el botón "Servicios" en el Header
-  it("muestra el botón o enlace 'Servicios' en el header", () => {
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    );
-
-    const botonServicios = screen.getByRole("link", { name: /servicios/i });
-    expect(botonServicios).toBeDefined();
+  it("muestra 'Servicios' en el header", () => {
+    renderApp();
+    expect(
+      screen.getAllByRole("link", { name: /servicios/i }).length
+    ).toBeGreaterThan(0);
   });
 
-  // PRUEBA 3: Verificar el botón "Nosotros" en el Header
-  it("muestra el botón o enlace 'Nosotros' en el header", () => {
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    );
-
-    const botonNosotros = screen.getByRole("link", { name: /nosotros/i });
-    expect(botonNosotros).toBeDefined();
+  it("muestra 'Nosotros' en el header", () => {
+    renderApp();
+    expect(
+      screen.getAllByRole("link", { name: /nosotros/i }).length
+    ).toBeGreaterThan(0);
   });
 
-  // PRUEBA 4: Verificar el botón de inicio de sesión ("Ingresar")
-  it("muestra el botón de inicio de sesión 'Ingresar'", () => {
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    );
-
-    const botonIngresar = screen.getByRole("button", { name: /ingresar/i }) || 
-                          screen.getByRole("link", { name: /ingresar/i });
-
-    expect(botonIngresar).toBeDefined();
+  it("muestra el botón 'Ingresar'", () => {
+    renderApp();
+    const ingresar =
+      screen.queryByRole("button", { name: /ingresar/i }) ??
+      screen.queryByRole("link", { name: /ingresar/i });
+    expect(ingresar).not.toBeNull();
   });
 
-  // PRUEBA 5: Verificar que existen los botones "Ver Detalles" en las cards de servicios
-  it("muestra al menos un botón 'Ver Detalles' en las tarjetas de productos/servicios", () => {
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    );
-
-    const botonesDetalles = screen.getAllByRole("button", { name: /ver detalles/i });
-
-    // Verificamos que al menos exista un botón "Ver Detalles" renderizado en la página
-    expect(botonesDetalles.length).toBeGreaterThan(0);
+  it("muestra al menos un 'Ver Detalles'", () => {
+    renderApp();
+    const items = [
+      ...screen.queryAllByRole("button", { name: /ver detalles/i }),
+      ...screen.queryAllByRole("link", { name: /ver detalles/i }),
+    ];
+    expect(items.length).toBeGreaterThan(0);
   });
 });
