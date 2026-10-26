@@ -1,0 +1,184 @@
+/* =========================================================
+   1. CONTENEDOR PRINCIPAL
+   ========================================================= */
+
+.admin-panel {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+  color: #1e293b;
+}
+
+
+/* =========================================================
+   2. ENCABEZADO DEL PANEL
+   ========================================================= */
+
+.admin-panel .admin-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  background-color: #66c6fd;
+}
+
+.admin-panel .admin-cabecera h1 {
+  margin: 0 0 8px;
+  font-size: 1.8rem;
+  color: #111;
+}
+
+.admin-panel .admin-cabecera p {
+  margin: 0;
+}
+
+
+/* =========================================================
+   3. SECCIONES: SERVICIOS Y CITAS
+   ========================================================= */
+
+.admin-panel .admin-seccion {
+  padding: 24px;
+  margin-bottom: 24px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.admin-panel .admin-seccion-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.admin-panel .admin-titulo-seccion,
+.admin-panel .admin-seccion-cabecera h2 {
+  margin: 0 0 16px;
+  font-size: 1.4rem;
+  color: #1e1b4b;
+}
+
+.admin-panel .admin-descripcion {
+  color: #64748b;
+}
+
+
+/* =========================================================
+   4. FORMULARIO PARA CREAR Y EDITAR
+   ========================================================= */
+
+.admin-panel .admin-formulario {
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid #dbe3ec;
+  border-radius: 12px;
+  background-color: #f8fafc;
+}
+
+.admin-panel .admin-formulario h3 {
+  margin: 0 0 20px;
+  font-size: 1.15rem;
+}
+
+.admin-panel .admin-acciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   5. LISTA DE SERVICIOS
+   ========================================================= */
+
+.admin-panel .admin-subtitulo {
+  margin: 0 0 16px;
+  font-size: 1.15rem;
+}
+
+.admin-panel .admin-lista-servicios {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-panel .admin-servicio {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.admin-panel .admin-servicio-imagen {
+  width: 110px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.admin-panel .admin-servicio-info {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-panel .admin-servicio-info h4 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.admin-panel .admin-servicio-info p {
+  margin: 0;
+  color: #64748b;
+}
+
+
+/* =========================================================
+   6. MENSAJES SIN REGISTROS
+   ========================================================= */
+
+.admin-panel .admin-vacio {
+  padding: 20px;
+  margin: 0;
+  border-radius: 10px;
+  background-color: #f1f5f9;
+  color: #475569;
+  text-align: center;
+}
+
+
+/* =========================================================
+   7. ADAPTACIÓN A PANTALLAS PEQUEÑAS
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .admin-panel {
+    padding: 16px;
+  }
+
+  .admin-panel .admin-cabecera,
+  .admin-panel .admin-seccion-cabecera,
+  .admin-panel .admin-servicio {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-panel .admin-seccion {
+    padding: 16px;
+  }
+
+  .admin-panel .admin-servicio-imagen {
+    width: 100%;
+    height: 180px;
+  }
+}
