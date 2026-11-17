@@ -26,13 +26,17 @@ function FormLogin() {
   // Guardamos el mensaje de error que mostraremos en pantalla.
   const [error, setError] = useState("");
 
+  // true mientras esperamos la respuesta del backend (evita doble envío).
+  const [enviando, setEnviando] = useState(false);
+
   // Obtenemos la función de inicio de sesión desde el contexto.
   const { login } = useAuth();
 
   // Permite cambiar de página desde el código.
   const navegar = useNavigate();
 
-  const manejarEnvio = (e: SubmitEvent<HTMLFormElement>) => {
+  // async: el login ahora espera la respuesta del microservicio autenticacion.
+  const manejarEnvio = async (e: SubmitEvent<HTMLFormElement>) => {
     // Evitamos que el formulario recargue la página.
     e.preventDefault();
 
@@ -55,13 +59,18 @@ function FormLogin() {
       return;
     }
 
-    // El contexto comprueba las credenciales y guarda la sesión.
-    const sesion = login(correo, contrasena);
+    // El contexto llama a POST /auth/login y guarda la sesión con el token.
+    // Si el backend responde 401 (o no responde), llega un Error con el mensaje.
+    let sesion;
+    setEnviando(true);
 
-    // Si no hay coincidencia, detenemos el proceso.
-    if (!sesion) {
-      setError("Correo o contraseña incorrectos");
+    try {
+      sesion = await login(correo, contrasena);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo iniciar sesión");
       return;
+    } finally {
+      setEnviando(false);
     }
 
     // Al presionar Aceptar, continúa la redirección.
@@ -123,8 +132,9 @@ function FormLogin() {
     <button
       type="submit"
       className="boton-login"
+      disabled={enviando}
     >
-      Iniciar sesión
+      {enviando ? "Ingresando..." : "Iniciar sesión"}
     </button>
 
       <p className="mt-3 mb-0 text-center">

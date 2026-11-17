@@ -18,6 +18,9 @@ function FormRegistro() {
   // Mensaje que mostraremos si ocurre un error.
   const [error, setError] = useState("");
 
+  // true mientras esperamos la respuesta del backend (evita doble envío).
+  const [enviando, setEnviando] = useState(false);
+
   // Obtenemos la función de registro desde el contexto.
   const { registrar } = useAuth();
 
@@ -33,7 +36,8 @@ function FormRegistro() {
 
   const destino = estado?.from;
 
-  const manejarEnvio = (e: FormEvent<HTMLFormElement>) => {
+  // async: el registro ahora espera la respuesta del microservicio usuarios.
+  const manejarEnvio = async (e: FormEvent<HTMLFormElement>) => {
     // Evitamos que el formulario recargue la página.
     e.preventDefault();
 
@@ -66,13 +70,17 @@ function FormRegistro() {
       return;
     }
 
-    // El contexto revisa si el correo está ocupado y guarda la cuenta.
-    // Devuelve un mensaje de error o null cuando todo sale bien.
-    const mensaje = registrar(nombre, correo, contrasena);
+    // El contexto llama a POST /usuarios/registro.
+    // El backend cifra la contraseña y responde 409 si el correo ya existe.
+    setEnviando(true);
 
-    if (mensaje !== null) {
-      setError(mensaje);
+    try {
+      await registrar(nombre, correo, contrasena);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo crear la cuenta");
       return;
+    } finally {
+      setEnviando(false);
     }
 
     alert("Cuenta creada correctamente. Ahora puedes iniciar sesión.");
@@ -129,8 +137,9 @@ function FormRegistro() {
       <button
         type="submit"
         className="btn btn-primary w-100"
+        disabled={enviando}
       >
-        Crear cuenta
+        {enviando ? "Creando cuenta..." : "Crear cuenta"}
       </button>
 
       <p className="mt-3 mb-0 text-center">

@@ -1,21 +1,22 @@
 // Solo permitimos estos dos roles.
 export type Rol = "admin" | "cliente";
 
-// Datos completos de una cuenta.
-// En esta demostración, las cuentas se guardarán en localStorage.
+// Datos públicos de una cuenta, tal como los devuelve el microservicio usuarios.
+// La contraseña nunca llega al frontend: vive cifrada (BCrypt) en bd_usuarios.
 export type Usuario = {
+  id: number;
   nombre: string;
   email: string;
-  password: string;
   rol: Rol;
 };
 
-// Datos del usuario que inició sesión.
-// No necesitamos incluir la contraseña en la sesión.
+// Datos del usuario que inició sesión (respuesta de POST /auth/login).
+// El token (JWT) se envía en "Authorization: Bearer <token>" a los endpoints protegidos.
 export type Sesion = {
   nombre: string;
   email: string;
   rol: Rol;
+  token: string;
 };
 
 // Datos de un servicio de la veterinaria.

@@ -24,7 +24,10 @@ function FormRestablecerContrasena() {
 
   const [error, setError] = useState("");
 
-  // Las dos funciones nuevas del contexto.
+  // true mientras esperamos la respuesta del backend (evita doble envío).
+  const [enviando, setEnviando] = useState(false);
+
+  // Las dos funciones del contexto (ahora llaman al microservicio usuarios).
   const { revisarCorreoContrasena, restablecerContrasena } = useAuth();
 
   const navegar = useNavigate();
@@ -45,7 +48,7 @@ function FormRestablecerContrasena() {
   const correoLimpio = correo.trim().toLowerCase();
 
   // Paso 1: revisa el correo y "envía" el código.
-  function enviarCodigo() {
+  async function enviarCodigo() {
     if (correoLimpio === "") {
       setError("Debe ingresar su correo");
       return;
@@ -56,11 +59,12 @@ function FormRestablecerContrasena() {
       return;
     }
 
-    // El contexto revisa que sea una cuenta de cliente.
-    const problema = revisarCorreoContrasena(correoLimpio);
-
-    if (problema !== null) {
-      setError(problema);
+    // POST /usuarios/restablecer/verificar: responde 404 si no existe
+    // y 403 si es la cuenta del administrador.
+    try {
+      await revisarCorreoContrasena(correoLimpio);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo revisar el correo");
       return;
     }
 
@@ -69,7 +73,7 @@ function FormRestablecerContrasena() {
   }
 
   // Paso 2: revisa el código y guarda la nueva contraseña.
-  function guardarContrasena() {
+  async function guardarContrasena() {
     if (codigo === "") {
       setError("Debe ingresar el código");
       return;
@@ -90,11 +94,12 @@ function FormRestablecerContrasena() {
       return;
     }
 
-    // El contexto revisa que sea distinta a la anterior y la guarda.
-    const mensaje = restablecerContrasena(correoLimpio, nuevaContrasena);
-
-    if (mensaje !== null) {
-      setError(mensaje);
+    // PUT /usuarios/restablecer: el backend revisa que sea distinta
+    // a la anterior (responde 400 si es igual) y la guarda cifrada.
+    try {
+      await restablecerContrasena(correoLimpio, nuevaContrasena);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo cambiar la contraseña");
       return;
     }
 
@@ -109,17 +114,22 @@ function FormRestablecerContrasena() {
     });
   }
 
-  const manejarEnvio = (e: SubmitEvent<HTMLFormElement>) => {
+  const manejarEnvio = async (e: SubmitEvent<HTMLFormElement>) => {
     // Evitamos que el formulario recargue la página.
     e.preventDefault();
 
     // Limpiamos el error del intento anterior.
     setError("");
+    setEnviando(true);
 
-    if (enPasoCorreo) {
-      enviarCodigo();
-    } else {
-      guardarContrasena();
+    try {
+      if (enPasoCorreo) {
+        await enviarCodigo();
+      } else {
+        await guardarContrasena();
+      }
+    } finally {
+      setEnviando(false);
     }
   };
 
@@ -188,8 +198,8 @@ function FormRestablecerContrasena() {
       )}
 
       {/* Mismo botón celeste del login. */}
-      <button type="submit" className="boton-login">
-        {enPasoCorreo ? "Enviar código" : "Guardar contraseña"}
+      <button type="submit" className="boton-login" disabled={enviando}>
+        {enviando ? "Procesando..." : enPasoCorreo ? "Enviar código" : "Guardar contraseña"}
       </button>
 
       {!enPasoCorreo && (
