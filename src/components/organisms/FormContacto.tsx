@@ -5,8 +5,7 @@ import CampoAreaTexto from "../molecules/CampoAreaTexto";
 import Boton from "../atoms/Boton";
 
 import { useAuth } from "../../context/AuthContext";
-import { obtenerMensajes, guardarMensajes } from "../../data/mensajes";
-import type { Mensaje } from "../../types";
+import { enviarMensaje } from "../../data/mensajes";
 
 function FormContacto() {
   const { usuario } = useAuth();
@@ -16,10 +15,16 @@ function FormContacto() {
   const [correo, setCorreo] = useState(usuario?.email ?? "");
   const [texto, setTexto] = useState("");
   const [error, setError] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
-  const manejarEnvio = (e: SubmitEvent<HTMLFormElement>) => {
+  const manejarEnvio = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+
+    // Evita enviar dos veces si se hace clic varias veces seguidas.
+    if (enviando) {
+      return;
+    }
 
     if (nombre.trim() === "") {
       setError("Debe ingresar su nombre");
@@ -41,22 +46,34 @@ function FormContacto() {
       return;
     }
 
-    const nuevoMensaje: Mensaje = {
-      id: Date.now(),
-      nombre: nombre.trim(),
-      correo: correo.trim(),
-      texto: texto.trim(),
-      fecha: new Date().toISOString(),
-    };
+    setEnviando(true);
 
-    guardarMensajes([...obtenerMensajes(), nuevoMensaje]);
+    try {
+      await enviarMensaje({
+        nombre: nombre.trim(),
+        correo: correo.trim(),
+        texto: texto.trim(),
+      });
 
-    alert("¡Gracias por escribirnos! Te responderemos a la brevedad.");
+      alert("¡Gracias por escribirnos! Te responderemos a la brevedad.");
 
-    // Volvemos al inicio: datos de la sesión (si hay) y mensaje vacío.
-    setNombre(usuario?.nombre ?? "");
-    setCorreo(usuario?.email ?? "");
-    setTexto("");
+      // Volvemos al inicio: datos de la sesión (si hay) y mensaje vacío.
+      setNombre(usuario?.nombre ?? "");
+      setCorreo(usuario?.email ?? "");
+      setTexto("");
+    } catch (err) {
+      // Si el servidor respondió con un error mostramos su mensaje.
+      // Si ni siquiera hubo respuesta, el microservicio está apagado o inaccesible.
+      setError(
+        err instanceof TypeError
+          ? "No se pudo conectar con el servidor. Intente más tarde."
+          : err instanceof Error
+            ? err.message
+            : "No se pudo enviar el mensaje"
+      );
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -91,7 +108,11 @@ function FormContacto() {
       )}
 
       <div className="d-grid">
-        <Boton texto="Enviar mensaje" type="submit" variante="color" />
+        <Boton
+          texto={enviando ? "Enviando..." : "Enviar mensaje"}
+          type="submit"
+          variante="color"
+        />
       </div>
     </form>
   );

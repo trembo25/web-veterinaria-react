@@ -1,10 +1,38 @@
+import { useEffect, useState } from "react";
+
 import { obtenerMensajes } from "../../data/mensajes";
+import type { Mensaje } from "../../types";
 
 function TablaMensajes() {
-  // Los mensajes más nuevos quedan arriba.
-  const mensajes = obtenerMensajes().sort((a, b) =>
-    b.fecha.localeCompare(a.fecha)
-  );
+  const [mensajes, setMensajes] = useState<Mensaje[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+
+  // Al abrir el panel pedimos los mensajes al microservicio.
+  useEffect(() => {
+    let cancelado = false;
+
+    obtenerMensajes()
+      .then((datos) => {
+        if (!cancelado) {
+          setMensajes(datos);
+        }
+      })
+      .catch(() => {
+        if (!cancelado) {
+          setError("No se pudieron cargar los mensajes. Revise que el servicio de mensajería esté encendido.");
+        }
+      })
+      .finally(() => {
+        if (!cancelado) {
+          setCargando(false);
+        }
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, []);
 
   return (
     <section className="admin-seccion">
@@ -12,7 +40,15 @@ function TablaMensajes() {
         Mensajes de contacto
       </h2>
 
-      {mensajes.length === 0 ? (
+      {cargando ? (
+        <p className="admin-vacio">
+          Cargando mensajes...
+        </p>
+      ) : error !== "" ? (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      ) : mensajes.length === 0 ? (
         <p className="admin-vacio">
           Todavía no hay mensajes.
         </p>
