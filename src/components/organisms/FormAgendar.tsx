@@ -1,4 +1,4 @@
-import { useState, type SubmitEvent } from "react";
+﻿import { useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CampoFormulario from "../molecules/CampoFormulario";
@@ -6,7 +6,7 @@ import CampoSelect from "../molecules/CampoSelect";
 import Boton from "../atoms/Boton";
 
 import { useAuth } from "../../context/AuthContext";
-import { obtenerServicios } from "../../data/servicios";
+import { useServicios } from "../../data/servicios";
 import { crearCita } from "../../data/Citas";
 
 const horas = [
@@ -35,7 +35,8 @@ function FormAgendar() {
   const { usuario } = useAuth();
   const navegar = useNavigate();
 
-  const nombresServicios = obtenerServicios().map((actual) => actual.titulo);
+  const { servicios } = useServicios();
+  const nombresServicios = servicios.map((actual) => actual.titulo);
 
   // ---------- Límites del calendario ----------
   const ahora = new Date();

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import ResumenPago from "../components/molecules/ResumenPago";
@@ -7,13 +7,14 @@ import ComprobantePago from "../components/organisms/ComprobantePago";
 
 import { useAuth } from "../context/AuthContext";
 import { obtenerCita, guardarPago } from "../data/Citas";
-import { obtenerPrecio } from "../data/servicios";
+import { useServicios, buscarPrecio } from "../data/servicios";
 import type { Cita, Pago } from "../types";
 
 function PagoCita() {
   // El id viene de la dirección. Ej: /pago/12 → "12".
   const { id } = useParams();
   const { usuario } = useAuth();
+  const { servicios, cargando: cargandoServicios } = useServicios();
 
   const [cita, setCita] = useState<Cita | undefined>(undefined);
   const [cargando, setCargando] = useState(true);
@@ -69,7 +70,7 @@ function PagoCita() {
 
   // Decide qué mostrar dentro de la tarjeta.
   function mostrarContenido() {
-    if (cargando) {
+    if (cargando || cargandoServicios) {
       return <p className="text-muted">Cargando cita...</p>;
     }
 
@@ -92,7 +93,7 @@ function PagoCita() {
       );
     }
 
-    const precio = obtenerPrecio(cita.servicio);
+    const precio = buscarPrecio(servicios, cita.servicio);
 
     // Servicio sin precio (por ejemplo, uno nuevo creado por el admin).
     if (!precio) {

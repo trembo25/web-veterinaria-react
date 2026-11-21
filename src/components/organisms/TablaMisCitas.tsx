@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import FilaCita from "../molecules/FilaCita";
@@ -6,7 +6,7 @@ import Boton from "../atoms/Boton";
 
 import { useAuth } from "../../context/AuthContext";
 import { obtenerCitas, eliminarCita } from "../../data/Citas";
-import { obtenerPrecio } from "../../data/servicios";
+import { useServicios, buscarPrecio } from "../../data/servicios";
 import type { Cita } from "../../types";
 
 function TablaMisCitas() {
@@ -17,6 +17,7 @@ function TablaMisCitas() {
   const { usuario } = useAuth();
   const navegar = useNavigate();
   const email = usuario?.email;
+  const { servicios } = useServicios();
 
   // Al abrir la página pedimos solo las citas de este cliente.
   useEffect(() => {
@@ -126,7 +127,7 @@ function TablaMisCitas() {
               key={cita.id}
               cita={cita}
               // Las citas guardan el nombre del servicio: con él buscamos su precio.
-              precio={obtenerPrecio(cita.servicio)}
+              precio={buscarPrecio(servicios, cita.servicio)}
               alCancelar={() => cancelarCita(cita)}
               // Ej: /pago/12 (el id de la cita).
               alIrAlPago={() => navegar(`/pago/${cita.id}`)}
