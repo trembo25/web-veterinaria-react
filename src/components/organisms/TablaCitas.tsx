@@ -1,54 +1,75 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InsigniaPago from "../atoms/InsigniaPago";
+import { obtenerCitas, eliminarCita, confirmarPago } from "../../data/Citas";
 import type { Cita } from "../../types";
 
-function leerCitas(): Cita[] {
-  const guardadas = localStorage.getItem("citas");
-
-  if (!guardadas) {
-    return [];
-  }
-
-  try {
-    const datos = JSON.parse(guardadas);
-
-    // Solo utilizamos el contenido si es una lista.
-    return Array.isArray(datos) ? datos : [];
-  } catch {
-    return [];
-  }
-}
-
 function TablaCitas() {
-  const [citas, setCitas] = useState<Cita[]>(leerCitas);
+  const [citas, setCitas] = useState<Cita[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
-  function eliminarCita(id: Cita["id"]) {
+  // Al abrir el panel pedimos todas las citas al microservicio.
+  useEffect(() => {
+    let cancelado = false;
+
+    obtenerCitas()
+      .then((datos) => {
+        if (!cancelado) {
+          setCitas(datos);
+        }
+      })
+      .catch(() => {
+        if (!cancelado) {
+          setError("No se pudieron cargar las citas. Revise que el servicio de citas esté encendido.");
+        }
+      })
+      .finally(() => {
+        if (!cancelado) {
+          setCargando(false);
+        }
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  async function quitarCita(id: Cita["id"]) {
     if (!window.confirm("¿Estás seguro de eliminar esta cita?")) {
       return;
     }
 
-    // se crea una lista sin la cita seleccionada
-    const nuevasCitas = citas.filter((cita) => cita.id !== id);
+    try {
+      await eliminarCita(id);
 
-    // Guardamos los cambios y actualizamos la tabla
-    localStorage.setItem("citas", JSON.stringify(nuevasCitas));
-    setCitas(nuevasCitas);
+      // Solo si el servidor la borró, la quitamos de la tabla.
+      setCitas((actuales) => actuales.filter((cita) => cita.id !== id));
+    } catch (err) {
+      alert(
+        err instanceof TypeError
+          ? "No se pudo conectar con el servidor. Intente más tarde."
+          : err instanceof Error
+            ? err.message
+            : "No se pudo eliminar la cita"
+      );
+    }
   }
 
   // El admin confirma que recibió una transferencia: pasa de "pendiente" a "pagado".
-  function confirmarPago(cita: Cita) {
+  function aprobarPago(cita: Cita) {
     if (!window.confirm(`¿Confirmas que recibiste la transferencia de ${cita.pago?.monto}?`)) {
       return;
     }
 
-    const nuevasCitas = citas.map((actual): Cita =>
-      actual.id === cita.id && actual.pago
-        ? { ...actual, pago: { ...actual.pago, estado: "pagado" } }
-        : actual
-    );
+    confirmarPago(cita.id);
 
-    localStorage.setItem("citas", JSON.stringify(nuevasCitas));
-    setCitas(nuevasCitas);
+    setCitas((actuales) =>
+      actuales.map((actual): Cita =>
+        actual.id === cita.id && actual.pago
+          ? { ...actual, pago: { ...actual.pago, estado: "pagado" } }
+          : actual
+      )
+    );
   }
 
   return (
@@ -57,7 +78,15 @@ function TablaCitas() {
         Citas de los clientes
       </h2>
 
-      {citas.length === 0 ? (
+      {cargando ? (
+        <p className="admin-vacio">
+          Cargando citas...
+        </p>
+      ) : error !== "" ? (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      ) : citas.length === 0 ? (
         <p className="admin-vacio">
           Todavía no hay citas registradas.
         </p>
@@ -100,7 +129,7 @@ function TablaCitas() {
                       <button
                         type="button"
                         className="btn btn-outline-success btn-sm me-2"
-                        onClick={() => confirmarPago(cita)}
+                        onClick={() => aprobarPago(cita)}
                       >
                         Confirmar pago
                       </button>
@@ -109,7 +138,7 @@ function TablaCitas() {
                     <button
                       type="button"
                       className="btn btn-outline-danger btn-sm"
-                      onClick={() => eliminarCita(cita.id)}
+                      onClick={() => quitarCita(cita.id)}
                     >
                       Eliminar
                     </button>

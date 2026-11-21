@@ -17,8 +17,11 @@ type Props = {
 };
 
 function FilaCita({ cita, precio, alCancelar, alIrAlPago }: Props) {
-  // "2026-10-19T10:00" se separa en "2026-10-19" y "10:00".
-  const [dia, hora] = cita.fecha.split("T");
+  // "2026-10-19T10:00:00" se separa en "2026-10-19" y "10:00:00".
+  const [dia, horaCompleta] = cita.fecha.split("T");
+
+  // El backend devuelve la hora con segundos: nos quedamos con "10:00".
+  const hora = horaCompleta.slice(0, 5);
 
   // "2026-10-19" queda como "19-10-2026".
   const fecha = dia.split("-").reverse().join("-");

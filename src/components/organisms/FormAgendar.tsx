@@ -7,8 +7,7 @@ import Boton from "../atoms/Boton";
 
 import { useAuth } from "../../context/AuthContext";
 import { obtenerServicios } from "../../data/servicios";
-import { obtenerCitas, guardarCitas } from "../../data/Citas";
-import type { Cita } from "../../types";
+import { crearCita } from "../../data/Citas";
 
 const horas = [
   "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00",
@@ -31,6 +30,7 @@ function FormAgendar() {
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [error, setError] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
   const { usuario } = useAuth();
   const navegar = useNavigate();
@@ -69,7 +69,7 @@ function FormAgendar() {
     }
   }
 
-  const manejarEnvio = (e: SubmitEvent<HTMLFormElement>) => {
+  const manejarEnvio = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -123,20 +123,36 @@ function FormAgendar() {
       return;
     }
 
-    const nuevaCita: Cita = {
-      id: Date.now(),
-      clienteEmail: usuario.email,
-      clienteNombre: usuario.nombre,
-      mascota: mascota.trim(),
-      servicio,
-      fecha: fechaHora,
-    };
+    // Evita enviar dos veces si se hace clic varias veces seguidas.
+    if (enviando) {
+      return;
+    }
 
-    guardarCitas([...obtenerCitas(), nuevaCita]);
+    setEnviando(true);
 
-    alert("Cita agendada correctamente.");
+    try {
+      // El id no se manda: lo genera MySQL.
+      await crearCita({
+        clienteEmail: usuario.email,
+        clienteNombre: usuario.nombre,
+        mascota: mascota.trim(),
+        servicio,
+        fecha: fechaHora,
+      });
 
-    navegar("/", { replace: true });
+      alert("Cita agendada correctamente.");
+      navegar("/", { replace: true });
+    } catch (err) {
+      setError(
+        err instanceof TypeError
+          ? "No se pudo conectar con el servidor. Intente más tarde."
+          : err instanceof Error
+            ? err.message
+            : "No se pudo agendar la cita"
+      );
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (

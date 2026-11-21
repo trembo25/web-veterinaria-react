@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import ResumenPago from "../components/molecules/ResumenPago";
@@ -6,32 +6,77 @@ import FormPago from "../components/organisms/FormPago";
 import ComprobantePago from "../components/organisms/ComprobantePago";
 
 import { useAuth } from "../context/AuthContext";
-import { obtenerCitas, guardarPago } from "../data/Citas";
+import { obtenerCita, guardarPago } from "../data/Citas";
 import { obtenerPrecio } from "../data/servicios";
-import type { Pago } from "../types";
+import type { Cita, Pago } from "../types";
 
 function PagoCita() {
-  // El id viene de la dirección. Ej: /pago/1761222000000 → "1761222000000".
+  // El id viene de la dirección. Ej: /pago/12 → "12".
   const { id } = useParams();
   const { usuario } = useAuth();
 
-  // Buscamos la cita una sola vez, al abrir la página.
-  const [cita, setCita] = useState(() =>
-    obtenerCitas().find((actual) => String(actual.id) === id)
-  );
+  const [cita, setCita] = useState<Cita | undefined>(undefined);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
-  // Recibe el pago desde FormPago. guardarPago devuelve la cita actualizada:
-  // al cambiar el estado, la página se vuelve a dibujar y muestra el comprobante.
+  // Al abrir la página pedimos la cita al microservicio (GET /citas/{id}).
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+
+    let cancelado = false;
+
+    obtenerCita(id)
+      .then((datos) => {
+        if (!cancelado) {
+          setCita(datos);
+        }
+      })
+      .catch((err) => {
+        if (!cancelado) {
+          // TypeError = ni siquiera hubo respuesta (servicio apagado).
+          // Cualquier otro error = el servidor respondió (por ejemplo, 404).
+          setError(
+            err instanceof TypeError
+              ? "No se pudo conectar con el servidor. Intente más tarde."
+              : "No encontramos esa cita."
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelado) {
+          setCargando(false);
+        }
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, [id]);
+
+  // Recibe el pago desde FormPago. Lo guardamos y le agregamos el pago a la cita
+  // que ya tenemos: al cambiar el estado, la página se vuelve a dibujar y
+  // muestra el comprobante.
   function registrarPago(pago: Pago) {
     if (!cita) {
       return;
     }
 
-    setCita(guardarPago(cita.id, pago));
+    guardarPago(cita.id, pago);
+    setCita({ ...cita, pago });
   }
 
   // Decide qué mostrar dentro de la tarjeta.
   function mostrarContenido() {
+    if (cargando) {
+      return <p className="text-muted">Cargando cita...</p>;
+    }
+
+    if (error !== "") {
+      return <p className="text-muted">{error}</p>;
+    }
+
     // Solo el dueño de la cita puede pagarla o ver su comprobante.
     if (!cita || cita.clienteEmail !== usuario?.email) {
       return <p className="text-muted">No encontramos esa cita.</p>;

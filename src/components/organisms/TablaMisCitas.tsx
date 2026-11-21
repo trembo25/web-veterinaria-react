@@ -1,27 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import FilaCita from "../molecules/FilaCita";
 import Boton from "../atoms/Boton";
 
 import { useAuth } from "../../context/AuthContext";
-import { obtenerCitas, guardarCitas } from "../../data/Citas";
+import { obtenerCitas, eliminarCita } from "../../data/Citas";
 import { obtenerPrecio } from "../../data/servicios";
 import type { Cita } from "../../types";
 
 function TablaMisCitas() {
-  // Todas las citas guardadas (de todos los clientes).
-  const [citas, setCitas] = useState<Cita[]>(obtenerCitas);
+  const [citas, setCitas] = useState<Cita[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
   const { usuario } = useAuth();
   const navegar = useNavigate();
+  const email = usuario?.email;
 
-  // Solo las del cliente con sesión, ordenadas por fecha y hora.
-  const misCitas = citas
-    .filter((cita) => cita.clienteEmail === usuario?.email)
-    .sort((a, b) => a.fecha.localeCompare(b.fecha));
+  // Al abrir la página pedimos solo las citas de este cliente.
+  useEffect(() => {
+    if (!email) {
+      return;
+    }
 
-  function cancelarCita(cita: Cita) {
+    let cancelado = false;
+
+    obtenerCitas(email)
+      .then((datos) => {
+        if (!cancelado) {
+          setCitas(datos);
+        }
+      })
+      .catch(() => {
+        if (!cancelado) {
+          setError("No se pudieron cargar las citas. Revise que el servicio de citas esté encendido.");
+        }
+      })
+      .finally(() => {
+        if (!cancelado) {
+          setCargando(false);
+        }
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, [email]);
+
+  // Ordenadas por fecha y hora. Se copia la lista para no modificar el estado.
+  const misCitas = [...citas].sort((a, b) => a.fecha.localeCompare(b.fecha));
+
+  async function cancelarCita(cita: Cita) {
     const confirmar = window.confirm(
       `¿Cancelar la cita de ${cita.mascota}?`
     );
@@ -30,13 +60,34 @@ function TablaMisCitas() {
       return;
     }
 
-    // Lista sin la cita cancelada; las de otros clientes se mantienen.
-    const listaActualizada = citas.filter(
-      (actual) => actual.id !== cita.id
-    );
+    try {
+      await eliminarCita(cita.id);
 
-    guardarCitas(listaActualizada);
-    setCitas(listaActualizada);
+      // Solo si el servidor la borró, la quitamos de la pantalla.
+      setCitas((actuales) =>
+        actuales.filter((actual) => actual.id !== cita.id)
+      );
+    } catch (err) {
+      alert(
+        err instanceof TypeError
+          ? "No se pudo conectar con el servidor. Intente más tarde."
+          : err instanceof Error
+            ? err.message
+            : "No se pudo cancelar la cita"
+      );
+    }
+  }
+
+  if (cargando) {
+    return <p className="text-muted text-center">Cargando citas...</p>;
+  }
+
+  if (error !== "") {
+    return (
+      <div className="alert alert-danger" role="alert">
+        {error}
+      </div>
+    );
   }
 
   // Si el cliente no tiene citas, lo invitamos a agendar una.
@@ -77,7 +128,7 @@ function TablaMisCitas() {
               // Las citas guardan el nombre del servicio: con él buscamos su precio.
               precio={obtenerPrecio(cita.servicio)}
               alCancelar={() => cancelarCita(cita)}
-              // Ej: /pago/1761222000000 (el id de la cita).
+              // Ej: /pago/12 (el id de la cita).
               alIrAlPago={() => navegar(`/pago/${cita.id}`)}
             />
           ))}
