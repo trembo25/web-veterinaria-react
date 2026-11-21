@@ -1,4 +1,4 @@
-﻿import { useState, type SubmitEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CampoFormulario from "../molecules/CampoFormulario";
@@ -35,6 +35,7 @@ function FormAgendar() {
   const { usuario } = useAuth();
   const navegar = useNavigate();
 
+  // Los nombres del selector vienen del microservicio de servicios.
   const { servicios } = useServicios();
   const nombresServicios = servicios.map((actual) => actual.titulo);
 

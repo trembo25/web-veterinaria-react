@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import ResumenPago from "../components/molecules/ResumenPago";
@@ -14,11 +14,13 @@ function PagoCita() {
   // El id viene de la dirección. Ej: /pago/12 → "12".
   const { id } = useParams();
   const { usuario } = useAuth();
-  const { servicios, cargando: cargandoServicios } = useServicios();
 
   const [cita, setCita] = useState<Cita | undefined>(undefined);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+
+  // Lista de servicios: con ella buscamos el precio de la cita.
+  const { servicios, cargando: cargandoServicios } = useServicios();
 
   // Al abrir la página pedimos la cita al microservicio (GET /citas/{id}).
   useEffect(() => {

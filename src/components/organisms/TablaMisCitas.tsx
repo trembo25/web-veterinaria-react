@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import FilaCita from "../molecules/FilaCita";
@@ -17,6 +17,8 @@ function TablaMisCitas() {
   const { usuario } = useAuth();
   const navegar = useNavigate();
   const email = usuario?.email;
+
+  // Lista de servicios: con ella buscamos el precio de cada cita.
   const { servicios } = useServicios();
 
   // Al abrir la página pedimos solo las citas de este cliente.
