@@ -1,91 +1,121 @@
+import { useEffect, useState } from "react";
 import type { Servicio } from "../types";
 
-import atencion from "../assets/images/atencion.jpeg";
-import vacunacion from "../assets/images/vacuancion.jpeg";
-import cirugia from "../assets/images/capacitados.jpeg";
-import peluqueria from "../assets/images/peluqueria.jpeg";
-import hospitalizacion from "../assets/images/hospitalizacion.jpeg";
+// Dirección del microservicio de servicios.
+const URL_BASE = import.meta.env.VITE_SERVICIOS_URL ?? "http://localhost:8082";
+const URL_SERVICIOS = `${URL_BASE}/servicios`;
 
-const serviciosIniciales: Servicio[] = [
-  {
-    id: 1,
-    titulo: "Consulta Veterinaria",
-    descripcion:
-      "Ofrecemos consultas veterinarias para diagnosticar y tratar enfermedades en tus mascotas.",
-    imagen: atencion,
-    precio: "$23.000",
-  },
-  {
-    id: 2,
-    titulo: "Vacunación",
-    descripcion:
-      "Protege a tus mascotas con nuestro servicio de vacunación, asegurando su salud y bienestar.",
-    imagen: vacunacion,
-    precio: "$45.000",
-  },
-  {
-    id: 3,
-    titulo: "Cirugía Menor",
-    descripcion:
-      "Realizamos procedimientos quirúrgicos seguros y efectivos para el cuidado de tus mascotas.",
-    imagen: cirugia,
-    precio: "$89.000",
-  },
-  {
-    id: 4,
-    titulo: "Baño y Peluquería",
-    descripcion:
-      "Mantén a tus mascotas limpias y con estilo con nuestro servicio de baño y peluquería.",
-    imagen: peluqueria,
-    precio: "$25.000",
-  },
-  {
-    id: 5,
-    titulo: "Hospitalización",
-    descripcion:
-      "Ofrecemos hospitalización para mascotas que requieren atención médica continua.",
-    imagen: hospitalizacion,
-    precio: "$150.000",
-  },
-];
+// Lo que se envía al crear o editar: el id lo genera la base de datos.
+export type DatosServicio = Omit<Servicio, "id">;
 
-export function obtenerServicios(): Servicio[] {
-  const guardados = localStorage.getItem("servicios");
+type ErrorApi = {
+  mensaje?: string;
+  errores?: Record<string, string>;
+};
 
-  if (guardados === null) {
-    return serviciosIniciales;
-  }
-
+// Saca un texto legible del error que devuelve el microservicio.
+async function leerError(respuesta: Response): Promise<string> {
   try {
-    const datos = JSON.parse(guardados);
+    const datos: ErrorApi = await respuesta.json();
+    const primerError = datos.errores ? Object.values(datos.errores)[0] : undefined;
 
-    if (!Array.isArray(datos)) {
-      return serviciosIniciales;
-    }
-
-    // Si un servicio guardado no tiene precio, usamos el del servicio
-    // inicial con el mismo id (si existe).
-    return datos.map((servicio: Servicio) => {
-      if (servicio.precio) {
-        return servicio;
-      }
-
-      const inicial = serviciosIniciales.find(
-        (actual) => actual.id === servicio.id
-      );
-
-      return inicial?.precio
-        ? { ...servicio, precio: inicial.precio }
-        : servicio;
-    });
+    return primerError ?? datos.mensaje ?? "No se pudo completar la solicitud";
   } catch {
-    return serviciosIniciales;
+    return "No se pudo completar la solicitud";
   }
 }
 
-export function guardarServicios(servicios: Servicio[]) {
-  localStorage.setItem("servicios", JSON.stringify(servicios));
+// ---------- Peticiones al microservicio ----------
+
+// Trae todos los servicios (GET).
+export async function obtenerServicios(): Promise<Servicio[]> {
+  const respuesta = await fetch(URL_SERVICIOS);
+
+  if (!respuesta.ok) {
+    throw new Error(await leerError(respuesta));
+  }
+
+  return respuesta.json();
 }
+
+// Crea un servicio nuevo (POST).
+export async function crearServicio(datos: DatosServicio): Promise<Servicio> {
+  const respuesta = await fetch(URL_SERVICIOS, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos),
+  });
+
+  if (!respuesta.ok) {
+    throw new Error(await leerError(respuesta));
+  }
+
+  return respuesta.json();
+}
+
+// Reemplaza los datos de un servicio existente (PUT).
+export async function actualizarServicio(id: number, datos: DatosServicio): Promise<Servicio> {
+  const respuesta = await fetch(`${URL_SERVICIOS}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos),
+  });
+
+  if (!respuesta.ok) {
+    throw new Error(await leerError(respuesta));
+  }
+
+  return respuesta.json();
+}
+
+// Elimina un servicio (DELETE).
+export async function eliminarServicio(id: number): Promise<void> {
+  const respuesta = await fetch(`${URL_SERVICIOS}/${id}`, { method: "DELETE" });
+
+  if (!respuesta.ok) {
+    throw new Error(await leerError(respuesta));
+  }
+}
+
+// ---------- Hook para los componentes ----------
+
+// Pide los servicios al abrir el componente y entrega tres estados:
+// la lista, si todavía está cargando y si hubo un error.
+// Lo usan la página de inicio, el detalle, agendar, mis citas y el pago.
+export function useServicios() {
+  const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelado = false;
+
+    obtenerServicios()
+      .then((datos) => {
+        if (!cancelado) {
+          setServicios(datos);
+        }
+      })
+      .catch(() => {
+        if (!cancelado) {
+          setError("No se pudieron cargar los servicios. Revise que el servicio esté encendido.");
+        }
+      })
+      .finally(() => {
+        if (!cancelado) {
+          setCargando(false);
+        }
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  return { servicios, setServicios, cargando, error };
+}
+
+// ---------- Precio de un servicio ----------
 
 // Minúsculas, sin espacios extra y sin tildes.
 function normalizar(texto: string) {
@@ -93,18 +123,15 @@ function normalizar(texto: string) {
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(/[̀-ͯ]/g, "");
 }
 
-export function obtenerPrecio(titulo: string) {
+// Las citas guardan el nombre del servicio: con él buscamos su precio en la lista.
+export function buscarPrecio(servicios: Servicio[], titulo: string) {
   const buscado = normalizar(titulo);
 
-  const coincide = (servicio: Servicio) =>
-    normalizar(servicio.titulo) === buscado;
-
-  // Primero el servicio guardado; si no tiene precio, el inicial.
   return (
-    obtenerServicios().find(coincide)?.precio ||
-    serviciosIniciales.find(coincide)?.precio
+    servicios.find((servicio) => normalizar(servicio.titulo) === buscado)?.precio ||
+    undefined
   );
 }

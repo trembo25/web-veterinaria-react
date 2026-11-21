@@ -6,12 +6,14 @@ import Boton from "../atoms/Boton";
 import type { Servicio } from "../../types";
 
 import {
-  obtenerServicios,
-  guardarServicios,
+  useServicios,
+  crearServicio,
+  actualizarServicio,
+  eliminarServicio as borrarServicio,
 } from "../../data/servicios";
 
-// Todos los servicios nuevos utilizarán esta imagen.
-import imagenPredeterminada from "../../assets/images/atencion.jpeg";
+// Todos los servicios nuevos utilizarán esta imagen (está en public/images).
+const imagenPredeterminada = "/images/atencion.jpeg";
 
 // Convierte "25000", "25.000" o "$25.000" en "$25.000".
 // Devuelve null si no es un número válido.
@@ -25,10 +27,18 @@ function formatearPrecio(texto: string): string | null {
   return "$" + Number(digitos).toLocaleString("es-CL");
 }
 
+// Mensaje legible según el tipo de error.
+function mensajeDeError(err: unknown, porDefecto: string) {
+  if (err instanceof TypeError) {
+    return "No se pudo conectar con el servidor. Intente más tarde.";
+  }
+
+  return err instanceof Error ? err.message : porDefecto;
+}
+
 function AdminServicios() {
-  const [servicios, setServicios] = useState<Servicio[]>(
-    obtenerServicios
-  );
+  // La lista viene del microservicio de servicios.
+  const { servicios, setServicios, cargando, error: errorCarga } = useServicios();
 
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -40,6 +50,7 @@ function AdminServicios() {
   );
 
   const [error, setError] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
   function limpiarFormulario() {
     setTitulo("");
@@ -49,21 +60,14 @@ function AdminServicios() {
     setError("");
   }
 
-  // Guardamos los cambios y después actualizamos la pantalla.
-  function actualizarLista(lista: Servicio[]): boolean {
-    try {
-      guardarServicios(lista);
-      setServicios(lista);
-      return true;
-    } catch {
-      setError("No se pudieron guardar los cambios");
-      return false;
-    }
-  }
-
-  function manejarEnvio(e: SubmitEvent<HTMLFormElement>) {
+  async function manejarEnvio(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
+
+    // Evita enviar dos veces si se hace clic varias veces seguidas.
+    if (enviando) {
+      return;
+    }
 
     if (titulo.trim() === "") {
       setError("Debe ingresar el título del servicio");
@@ -89,28 +93,46 @@ function AdminServicios() {
       precio: precioFormateado,
     };
 
-    let listaActualizada: Servicio[];
+    setEnviando(true);
 
-    if (editandoId === null) {
-      // CREAR: imagen predeterminada automática.
-      const nuevoServicio: Servicio = {
-        id: Date.now(),
-        ...datos,
-        imagen: imagenPredeterminada,
-      };
+    try {
+      if (editandoId === null) {
+        // CREAR (POST): imagen predeterminada automática.
+        const creado = await crearServicio({
+          ...datos,
+          imagen: imagenPredeterminada,
+        });
 
-      listaActualizada = [...servicios, nuevoServicio];
-    } else {
-      // EDITAR: conservamos id e imagen, reemplazamos el resto.
-      listaActualizada = servicios.map((servicio) =>
-        servicio.id === editandoId
-          ? { ...servicio, ...datos }
-          : servicio
-      );
-    }
+        setServicios((actuales) => [...actuales, creado]);
+      } else {
+        // EDITAR (PUT): se envía el servicio completo, conservando
+        // la imagen y el precio anterior que ya tenía.
+        const actual = servicios.find((servicio) => servicio.id === editandoId);
 
-    if (actualizarLista(listaActualizada)) {
+        if (!actual) {
+          return;
+        }
+
+        const editado = await actualizarServicio(editandoId, {
+          titulo: datos.titulo,
+          descripcion: datos.descripcion,
+          precio: datos.precio,
+          imagen: actual.imagen,
+          precioAnterior: actual.precioAnterior,
+        });
+
+        setServicios((actuales) =>
+          actuales.map((servicio) =>
+            servicio.id === editado.id ? editado : servicio
+          )
+        );
+      }
+
       limpiarFormulario();
+    } catch (err) {
+      setError(mensajeDeError(err, "No se pudieron guardar los cambios"));
+    } finally {
+      setEnviando(false);
     }
   }
 
@@ -122,7 +144,7 @@ function AdminServicios() {
     setError("");
   }
 
-  function eliminarServicio(servicio: Servicio) {
+  async function eliminarServicio(servicio: Servicio) {
     const confirmar = window.confirm(
       `¿Eliminar el servicio "${servicio.titulo}"?`
     );
@@ -131,14 +153,19 @@ function AdminServicios() {
       return;
     }
 
-    const listaActualizada = servicios.filter(
-      (actual) => actual.id !== servicio.id
-    );
+    try {
+      await borrarServicio(servicio.id);
 
-    const guardado = actualizarLista(listaActualizada);
+      // Solo si el servidor lo borró, lo quitamos de la pantalla.
+      setServicios((actuales) =>
+        actuales.filter((actual) => actual.id !== servicio.id)
+      );
 
-    if (guardado && editandoId === servicio.id) {
-      limpiarFormulario();
+      if (editandoId === servicio.id) {
+        limpiarFormulario();
+      }
+    } catch (err) {
+      setError(mensajeDeError(err, "No se pudo eliminar el servicio"));
     }
   }
 
@@ -220,7 +247,15 @@ function AdminServicios() {
         Servicios registrados: {servicios.length}
       </h3>
 
-      {servicios.length === 0 ? (
+      {cargando ? (
+        <p className="admin-vacio">
+          Cargando servicios...
+        </p>
+      ) : errorCarga !== "" ? (
+        <div className="alert alert-danger" role="alert">
+          {errorCarga}
+        </div>
+      ) : servicios.length === 0 ? (
         <p className="admin-vacio">
           No hay servicios registrados.
         </p>

@@ -20,11 +20,30 @@ describe("Pruebas de la Página Principal", () => {
     // jsdom no implementa estas funciones y ManejoScroll las puede usar.
     window.scrollTo = vi.fn();
     Element.prototype.scrollIntoView = vi.fn();
+
+    // Simula al microservicio de servicios con un servicio de ejemplo,
+    // para que las pruebas no dependan de que el backend esté encendido.
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [
+          {
+            id: 1,
+            titulo: "Consulta Veterinaria",
+            descripcion: "Consulta de ejemplo",
+            imagen: "/images/atencion.jpeg",
+            precio: "$23.000",
+          },
+        ],
+      })
+    );
   });
 
   afterEach(() => {
     cleanup();
     localStorage.clear();
+    vi.unstubAllGlobals();
   });
 
   it("muestra 'Inicio' en el header", () => {
@@ -56,8 +75,12 @@ describe("Pruebas de la Página Principal", () => {
     expect(ingresar).not.toBeNull();
   });
 
-  it("muestra al menos un 'Ver Detalles'", () => {
+  it("muestra al menos un 'Ver Detalles'", async () => {
     renderApp();
+
+    // Espera a que lleguen los servicios del fetch simulado.
+    await screen.findAllByText(/ver detalles/i);
+
     const items = [
       ...screen.queryAllByRole("button", { name: /ver detalles/i }),
       ...screen.queryAllByRole("link", { name: /ver detalles/i }),

@@ -1,13 +1,22 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { obtenerServicios } from "../data/servicios";
+import { useServicios } from "../data/servicios";
 import Boton from "../components/atoms/Boton";
 
 function VerDetalles() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const servicios = obtenerServicios();
+  const { servicios, cargando } = useServicios();
 
   const servicio = servicios.find((s) => s.id === Number(id));
+
+  // Mientras llegan los datos del microservicio.
+  if (cargando) {
+    return (
+      <div className="container text-center py-5">
+        <p className="text-muted">Cargando servicio...</p>
+      </div>
+    );
+  }
 
   if (!servicio) {
     return (

@@ -1,9 +1,9 @@
 import CardServicio from "../molecules/CardServicio";
-import { obtenerServicios } from "../../data/servicios";
+import { useServicios } from "../../data/servicios";
 
 function Servicios() {
-  // Leemos la lista actual cada vez que se renderiza este componente.
-  const servicios = obtenerServicios();
+  // Los servicios se piden al microservicio al abrir la página.
+  const { servicios, cargando, error } = useServicios();
 
   return (
     <section id="servicios" className="seccion-servicios">
@@ -11,7 +11,11 @@ function Servicios() {
         Nuestros Servicios
       </h2>
 
-      {servicios.length === 0 ? (
+      {cargando ? (
+        <p>Cargando servicios...</p>
+      ) : error !== "" ? (
+        <p>{error}</p>
+      ) : servicios.length === 0 ? (
         <p>No hay servicios disponibles por el momento.</p>
       ) : (
       <div className="servicios-grid">
